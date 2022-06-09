@@ -6,14 +6,18 @@ PapgetConfig::PapgetConfig(Papget::DataDef datadef, Papget::Params params, QWidg
 {
     setWindowTitle(datadef.msg_name + " " + datadef.field);
     auto lay = new QVBoxLayout(this);
+    lay->setObjectName("PapgetConfig Layout");
     auto comboStyle = new QComboBox(this);
+    comboStyle->setObjectName("ComboStyle");
     lay->addWidget(comboStyle);
     auto stack = new QStackedWidget(this);
+    stack->setObjectName("Stack");
     lay->addWidget(stack);
 
 
     comboStyle->addItem("Text");
     QWidget* text_widget = new QWidget(this);
+    text_widget->setObjectName("TextWidget");
     auto cb = config_text(text_widget);
     callbacks.append(cb);
     stack->addWidget(text_widget);
@@ -25,6 +29,7 @@ PapgetConfig::PapgetConfig(Papget::DataDef datadef, Papget::Params params, QWidg
 
 
     auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    buttonBox->setObjectName("ButtonBox");
     lay->addWidget(buttonBox);
 
     connect(buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, [=]() mutable {
@@ -40,17 +45,22 @@ PapgetConfig::PapgetConfig(Papget::DataDef datadef, Papget::Params params, QWidg
 
 std::function<void()> PapgetConfig::config_text(QWidget* w) {
     auto layout = new QVBoxLayout(w);
+    layout->setObjectName(w->objectName()+" Layout");
 
     auto size_layout = new QHBoxLayout();
+    size_layout->setObjectName("SizeLayout");
     size_layout->addWidget(new QLabel("Size", w));
     auto size_sp = new QSpinBox(w);
+    size_sp->setObjectName("SizeSpinBox");
     size_sp->setValue(params.fontSize);
     size_layout->addWidget(size_sp);
     layout->addLayout(size_layout);
 
     auto color_layout = new QHBoxLayout();
+    color_layout->setObjectName("ColorLayout");
     color_layout->addWidget(new QLabel("Color", w));
     auto combo_color = new QComboBox(w);
+    combo_color->setObjectName("ColorComboBox");
     color_layout->addWidget(combo_color);
     QStringList colors = {"", "AC color", "black", "blue", "red", "green", "purple", "yellow", "white"};
     combo_color->addItems(colors);

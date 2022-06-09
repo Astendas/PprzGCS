@@ -28,6 +28,7 @@ Map2D::Map2D(QWidget *parent) : QGraphicsView(parent),
         QString tiles_path = settings.value("map/tiles_path").toString();
         int z =configs.count() - c->initial_rank;
         auto tp = new TileProvider(c, z, tile_size, tiles_path, this);
+        tp->setObjectName("TileProvider");
         tp->setOpacity(1);
         tp->setVisible(false);
         connect(tp, &TileProvider::displayTile, this, &Map2D::handleTile);
@@ -37,6 +38,7 @@ Map2D::Map2D(QWidget *parent) : QGraphicsView(parent),
     qreal maxxy = tile_size*pow(2, maxZoom);
     _scene = new MapScene(-maxxy, -maxxy, 2*tile_size*maxxy, 2*tile_size*maxxy, this);
     setScene(_scene);
+    _scene->setObjectName("MapScene");
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);

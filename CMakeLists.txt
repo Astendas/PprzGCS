@@ -39,9 +39,14 @@ message("PPRZGCS_VERSION set to ${PPRZGCS_VERSION}")
 add_definitions(-DPPRZGCS_VERSION="${PPRZGCS_VERSION}")
 
 option(SPEECH "Enable speech" ON)
+option(ADAPTIVE "Enable Adaptive interface mode" ON)
 
 find_package(IvyQt REQUIRED)
 find_package(pprzlinkQt REQUIRED)
+find_package(LSL REQUIRED)
+find_library(LSL lsl)
+set(LSL_LIBRARIES lsl)
+
 
 if(SPEECH)
     message("SPEECH ENABLED !")
@@ -50,6 +55,13 @@ if(SPEECH)
 else()
     message("SPEECH DISABLED !")
     find_package(Qt5 5.12 REQUIRED COMPONENTS Widgets Xml Network Svg  REQUIRED)
+endif()
+
+if(ADAPTIVE)
+    message("ADAPTIVE MODE ENABLED !")
+    add_definitions(-DADAPTIVE_ENABLED)
+else()
+    message("ADAPTIVE MODE DISABLED")
 endif()
 
 set(SOURCE
@@ -62,6 +74,8 @@ add_subdirectory(src)
 include_directories(
     ${INC_DIRS}
     ${LIBXML2_INCLUDE_DIR}
+    /usr/include/libxml2/
+
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE})
@@ -74,9 +88,12 @@ target_link_libraries(${PROJECT_NAME}
     $<$<BOOL:${SPEECH}>:Qt5::TextToSpeech>
     ${PROJ4_LIBRARIES}
     ${LIBXML2_LIBRARIES}
+    ${LSL_LIBRARIES}
     zip
     pprzlinkQt
     IvyQt
+    pthread
+
 )
 
 install(TARGETS ${PROJECT_NAME})

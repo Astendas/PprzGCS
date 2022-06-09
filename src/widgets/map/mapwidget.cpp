@@ -38,20 +38,29 @@ MapWidget::MapWidget(QWidget *parent) : Map2D(parent),
     auto settings = getAppSettings();
 
     horizontalLayout = new QHBoxLayout(this);   // main layout
+    horizontalLayout->setObjectName("MapMainLayout");
     buttonsLeftLayout = new QVBoxLayout();
+    buttonsLeftLayout->setObjectName("ButtonsLeftLayout");
     columnLeft = new QVBoxLayout();
+    columnLeft->setObjectName("ColumnLeft");
     rightLayout = new QVBoxLayout();
+    rightLayout->setObjectName("RightLayout");
     auto h_right = new QHBoxLayout();
+    h_right->setObjectName("H_rightLayout");
     columnRight = new QVBoxLayout();
+    columnRight->setObjectName("ColumnRight");
     buttonsRightLayout = new QVBoxLayout();
+    buttonsRightLayout->setObjectName("ButtonsRightLayout");
 
     horizontalLayout->addItem(buttonsLeftLayout);
     horizontalLayout->addItem(columnLeft);
     horizontalLayout->addStretch(1);
     horizontalLayout->addItem(rightLayout);
+    
     rightLayout->addItem(h_right);
     h_right->addItem(columnRight);
     h_right->addItem(buttonsRightLayout);
+    
 
     buttonsLeftLayout->addStretch(1);
     buttonsRightLayout->addStretch(1);
@@ -184,6 +193,7 @@ LayerCombo* MapWidget::makeLayerCombo() {
     auto settings = getAppSettings();
 
     auto layer_combo = new LayerCombo(this);
+    layer_combo->setObjectName("LayerCombo");
     //layer_combo->setStyleSheet("QWidget{background-color: #31363b;} QLabel{color:white;}");
 
     auto tps = tileProviders();
@@ -297,6 +307,7 @@ void MapWidget::configure(QDomElement ele) {
 
             auto icon = QIcon(user_or_app_path("pictures/" + icon_src));
             auto button = new LockButton(icon, this);
+            button->setObjectName(widget->objectName()+"Button");
             button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
             addWidget(widget, button, side);
@@ -337,6 +348,7 @@ void MapWidget::addItem(MapItem* map_item) {
     map_item->updateGraphics(this, UpdateEvent::ANY);
     _items.append(map_item);
     emit itemAdded(map_item);
+    map_item->setObjectName("map_Item");
 
     map_item->setHighlighted(map_item->acId() == current_ac || map_item->acId() == "__NO_AC__");
 

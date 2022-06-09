@@ -12,9 +12,14 @@ class CoordinatesTransform;
 class Units;
 class DispatcherUi;
 
+#if defined(ADAPTIVE_ENABLED)
+class NetworkAdapter;
+#endif
+
 #if defined(SPEECH_ENABLED)
 class Speaker;
 #endif
+
 class PprzToolbox : public QObject
 {
     Q_OBJECT
@@ -30,6 +35,10 @@ public:
 #if defined(SPEECH_ENABLED)
     Speaker*              speaker              () {return _speaker             ;}
 #endif
+#if defined(ADAPTIVE_ENABLED)
+    NetworkAdapter*       networkAdapter       () {return _networkAdapter      ;}
+#endif
+    void setAdaptive(bool b){adaptive=b;}
 
 private:
     void setChildToolboxes(void);
@@ -42,8 +51,12 @@ private:
 #if defined(SPEECH_ENABLED)
     Speaker* _speaker                           = nullptr;
 #endif
+#if defined(ADAPTIVE_ENABLED)
+    NetworkAdapter*       _networkAdapter       = nullptr;
+#endif
 
     friend class PprzApplication;
+    bool adaptive;
 
 };
 

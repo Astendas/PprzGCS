@@ -11,7 +11,9 @@ FlightPlanViewerV2::FlightPlanViewerV2(QString ac_id, QWidget *parent) : QTabWid
     ac_id(ac_id), current_block(0), current_stage(0), labels_stylesheet("")
 {
     addTab(make_blocks_tab(), "Blocks");
-    addTab(new FlightPlanEditor(ac_id, this), "Details");
+    auto flight_plan_editor=new FlightPlanEditor(ac_id, this);
+    flight_plan_editor->setObjectName("FlightPlanEditor");
+    addTab(flight_plan_editor, "Details");
 
     connect(AircraftManager::get()->getAircraft(ac_id)->getStatus(),
             &AircraftStatus::nav_status, this, &FlightPlanViewerV2::handleNavStatus);
@@ -21,13 +23,18 @@ FlightPlanViewerV2::FlightPlanViewerV2(QString ac_id, QWidget *parent) : QTabWid
 QWidget* FlightPlanViewerV2::make_blocks_tab() {
     auto settings = getAppSettings();
     auto scroll = new QScrollArea(this);
+    scroll->setObjectName("FlightPlan Scroll");
     scroll->setWidgetResizable(true);
     scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     auto widget = new QWidget();
+    widget->setObjectName("Blocks Tab");
 
     auto hbox = new QHBoxLayout(widget);
+    hbox->setObjectName("Blocks Hbox");
     auto vbox = new QVBoxLayout();
+    vbox->setObjectName("Blocks Vbox");
     auto grid_layout = new QGridLayout();
+    grid_layout->setObjectName("Blocks Grid Layout");
     grid_layout->setHorizontalSpacing(10);
     grid_layout->setVerticalSpacing(5);
     vbox->addItem(grid_layout);
@@ -41,8 +48,10 @@ QWidget* FlightPlanViewerV2::make_blocks_tab() {
         QString name = block->getName();
 
         auto lbl = new QLabel(txt != "" ? txt: name, widget);
+        lbl->setObjectName((txt != "" ? txt: name)+" Label");
 
         auto go_button = new QToolButton(widget);
+        go_button->setObjectName("Block Button");
         go_button->setText(QString::fromUtf8("\xE2\x86\x92"));
         connect(go_button, &QPushButton::clicked, this,
             [=]() {
@@ -58,6 +67,7 @@ QWidget* FlightPlanViewerV2::make_blocks_tab() {
         if(icon != "") {
             QString icon_path = appConfig()->value("GCS_ICONS_PATH").toString() + "/" + icon;
             auto ll = new QLabel(widget);
+            ll->setObjectName((txt != "" ? txt: name)+" Label");
             ll->setPixmap(QPixmap(icon_path));
             ll->setToolTip(txt);
             grid_layout->addWidget(ll, row, 1);

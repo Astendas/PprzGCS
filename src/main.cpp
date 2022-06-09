@@ -92,6 +92,10 @@ int main(int argc, char *argv[])
 #if defined(SPEECH_ENABLED)
         parser.addOption({"speech", "Enable speech"});
 #endif
+#if defined(ADAPTIVE_ENABLED)
+        parser.addOption({{"a","Adaptive"},"Adaptive Interface Mode"});
+        parser.addOption({{"debugeye","Debug eyetracking"},"Show eye tracking movement on screen"});
+#endif
         parser.process(a);
 
         setVerbose(parser.isSet("v"));
@@ -99,6 +103,10 @@ int main(int argc, char *argv[])
 #if defined(SPEECH_ENABLED)
         setSpeech(parser.isSet("speech"));
         pprzApp()->toolbox()->speaker()->enableSpeech(parser.isSet("speech"));
+#endif
+#if defined(ADAPTIVE_ENABLED)
+        pprzApp()->toolbox()->setAdaptive(parser.isSet("a"));
+        //pprzApp()->toolbox()->networkAdapter()->setDebug(parser.isSet("debugeye"));
 #endif
 
         if(parser.isSet("fpedit") && PprzMain::launch_type == DEFAULT) {

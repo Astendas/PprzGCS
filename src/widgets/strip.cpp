@@ -117,6 +117,7 @@ void Strip::build_full_strip() {
 
 void Strip::build_short_strip() {
     short_strip = new QWidget(this);
+    short_strip->setObjectName("short stip");
     auto short_strip_layout = new QVBoxLayout(short_strip);
     (void) short_strip_layout;
 
@@ -126,6 +127,7 @@ void Strip::build_short_strip() {
     short_strip_layout->addWidget(short_jl_bat);
 
     short_flight_time_label = new QLabel("00:00:00", short_strip);
+    short_flight_time_label->setObjectName("short flight time");
     short_flight_time_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     short_strip_layout->addWidget(short_flight_time_label);
 

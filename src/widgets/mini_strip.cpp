@@ -31,21 +31,26 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
     alt_mode(true), speed_mode(SpeedMode::GROUND_SPEED)
 {
     auto gl = new QGridLayout(this);
+    gl->setObjectName("GridLayout");
     auto ac = AircraftManager::get()->getAircraft(ac_id);
     auto ac_name = new QLabel(ac->name());
+    ac_name->setObjectName("ac Name Label");
     ac_name->setStyleSheet("font-weight: bold");
     gl->addWidget(ac_name, 0, 0);
 
 
     /////////// alt ///////////
     QHBoxLayout* alt_layout = new QHBoxLayout();
+    alt_layout->setObjectName("Alt Layout");
     alt_button = new QToolButton(this);
+    alt_button->setObjectName("Alt Button");
     alt_button->setIconSize(icons_size);
     agl_icon = QIcon(":/pictures/agl.svg");
     msl_icon = QIcon(":/pictures/msl.svg");
     alt_button->setIcon(agl_icon);
     alt_layout->addWidget(alt_button);
     alt_label = new QLabel("0 m", this);
+    alt_label->setObjectName("Alt Label");
     alt_label->setToolTip("Altitude AGL");
     alt_layout->addWidget(alt_label);
     gl->addLayout(alt_layout, 1, 1);
@@ -64,7 +69,9 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
 
     /////////// flight time ///////////
     QHBoxLayout* ft_lay = new QHBoxLayout();
+    ft_lay->setObjectName("Flight Time Layout");
     time_button = new QToolButton(this);
+    time_button->setObjectName("ft Button");
     time_button->setIconSize(icons_size);
     time_flight = QIcon(":/pictures/flight_time.svg");
     time_block = QIcon(":/pictures/block_time.svg");
@@ -73,6 +80,7 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
     time_button->setToolTip("Flight time");
     ft_lay->addWidget(time_button);
     flight_time_label = new QLabel("0 s", this);
+    flight_time_label->setObjectName("Flight Time Label");
     flight_time_label->setToolTip("Flight time");
     ft_lay->addWidget(flight_time_label);
     ft_lay->addStretch();
@@ -105,7 +113,9 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
 
     /////////// speed //////////////////
     QHBoxLayout* speed_lay = new QHBoxLayout();
+    speed_lay->setObjectName("Speed Layout");
     speed_button = new QToolButton(this);
+    speed_button->setObjectName("Speed Button");
     speed_button->setIconSize(icons_size);
     ground_speed_icon = QIcon(":/pictures/ground_speed.svg");
     air_speed_icon = QIcon(":/pictures/airspeed.svg");
@@ -113,6 +123,7 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
     speed_button->setIcon(ground_speed_icon);
     speed_lay->addWidget(speed_button);
     speed_label = new QLabel("0 m/s", this);
+    speed_label->setObjectName("Speed Label");
     speed_label->setToolTip("Ground speed");
     speed_lay->addWidget(speed_label);
     gl->addLayout(speed_lay, 2, 1);
@@ -142,8 +153,11 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
 
     /////////// block /////////
     auto block_lay = new QHBoxLayout();
+    block_lay->setObjectName("Block Layout");
     block_icon = new QLabel(this);
+    block_icon->setObjectName("Block Icon Label");
     block_label = new QLabel(this);
+    block_label->setObjectName("Block Label");
     block_lay->addWidget(block_icon);
     block_lay->addWidget(block_label);
     block_lay->addStretch();
@@ -153,13 +167,16 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
 
     ////////// bat /////////////
     auto bat_lay = new QHBoxLayout();
+    bat_lay->setObjectName("Battery Layout");
     bat_ok = QIcon(":/pictures/bat_ok.svg");
     bat_low = QIcon(":/pictures/bat_low.svg");
     bat_critic = QIcon(":/pictures/bat_critic.svg");
     bat_catastrophic = QIcon(":/pictures/bat_catastrophic.svg");
     bat_icon = new QLabel(this);
+    bat_icon->setObjectName("Battery Icon Label");
     bat_icon->setPixmap(bat_catastrophic.pixmap(icons_size));
     bat_label = new QLabel("00.0 V", this);
+    bat_label->setObjectName("Battery Label");
     bat_lay->addWidget(bat_icon);
     bat_lay->addWidget(bat_label);
     gl->addLayout(bat_lay, 1, 0);
@@ -179,18 +196,22 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
 
     ////////// throttle /////////////
     auto th_lay = new QHBoxLayout();
+    th_lay->setObjectName("Throttle Layout");
     throttle_on = QIcon(":/pictures/throttle_on.svg");
     throttle_killed = QIcon(":/pictures/throttle_killed.svg");
     throttle_icon = new QLabel(this);
+    throttle_icon->setObjectName("Throttle Icon Label");
     throttle_icon->setPixmap(throttle_killed.pixmap(icons_size));
     th_lay->addWidget(throttle_icon);
     throttle_label = new QLabel("0 %", this);
+    throttle_label->setObjectName("Throttle Label");
     throttle_label->setToolTip("Throttle");
     th_lay->addWidget(throttle_label);
     gl->addLayout(th_lay, 2, 0);
 
     //////// mode //////////
     ap_mode_button = new QPushButton("MODE");
+    ap_mode_button->setObjectName("Ap Mode Button");
     ap_mode_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     gl->addWidget(ap_mode_button, 1, 2);
     ap_mode_button->setToolTip("AP mode");
@@ -208,7 +229,10 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
 
     ///// Link, GPS, RC //////
     auto misc_lay = new QHBoxLayout();
+    misc_lay->setObjectName("Misc Layout");
+
     link_icon = new QLabel(this);
+    link_icon->setObjectName("Link Icon");
     link_ok = QIcon(":/pictures/link_ok.svg");
     link_warning = QIcon(":/pictures/link_warning.svg");
     link_lost = QIcon(":/pictures/link_nok.svg");
@@ -217,6 +241,7 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
     misc_lay->addWidget(link_icon);
 
     gps_icon = new QLabel(this);
+    gps_icon->setObjectName("GPS Icon");
     gps_ok = QIcon(":/pictures/gps_ok.svg");
     gps_lost = QIcon(":/pictures/gps_nok.svg");
     gps_icon->setPixmap(gps_lost.pixmap(30,30));
@@ -225,6 +250,7 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
 
 
     rc_icon = new QLabel(this);
+    rc_icon->setObjectName("RC Icon");
     rc_ok = QIcon(":/pictures/rc_ok.svg");
     rc_lost = QIcon(":/pictures/rc_nok.svg");
     rc_icon->setPixmap(rc_lost.pixmap(icons_size));
@@ -232,6 +258,7 @@ MiniStrip::MiniStrip(QString ac_id, QWidget *parent) : QWidget(parent),
     misc_lay->addWidget(rc_icon);
 
     imu_icon = new QLabel(this);
+    imu_icon->setObjectName("IMU Icon");
     imu_ok = QIcon(":/pictures/imu_ok.svg");
     imu_lost = QIcon(":/pictures/imu_nok.svg");
     imu_icon->setPixmap(imu_lost.pixmap(icons_size));

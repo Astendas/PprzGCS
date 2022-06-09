@@ -10,20 +10,27 @@
 SettingsViewer::SettingsViewer(QString ac_id, QWidget *parent) : QWidget(parent), ac_id(ac_id)
 {
     main_layout = new QVBoxLayout(this);
+    main_layout->setObjectName("Settings Layout");
     search_layout = new QHBoxLayout();
+    search_layout->setObjectName("Search Layout");
     path_save_layout = new QHBoxLayout();
+    path_save_layout->setObjectName("Path Save Layout");
     path_layout = new QHBoxLayout();
+    path_layout->setObjectName("Path Save");
     main_layout->addItem(search_layout);
 
 
     button_home = new QToolButton(this);
+    button_home->setObjectName("Home Button");
     button_home->setText(QString::fromUtf8("\xE2\x8C\x82"));
 
     button_save = new QToolButton(this);
+    button_save->setObjectName("Save Button");
     button_save->setIcon(style()->standardIcon(QStyle::SP_DialogSaveButton));
 
     path_layout->addWidget(button_home);
     path = new QStackedWidget(this);
+    path->setObjectName("Path StackWidget");
     path_layout->addWidget(path);
 
     main_layout->addItem(path_save_layout);
@@ -32,7 +39,9 @@ SettingsViewer::SettingsViewer(QString ac_id, QWidget *parent) : QWidget(parent)
     path_save_layout->addWidget(button_save);
 
     scroll = new QScrollArea();
+    scroll->setObjectName("Settings Scroll");
     scroll_content = new QStackedWidget();
+    scroll_content->setObjectName("Scroll Content");
 
     main_layout->addWidget(scroll);
     scroll->setWidget(scroll_content);
@@ -42,6 +51,7 @@ SettingsViewer::SettingsViewer(QString ac_id, QWidget *parent) : QWidget(parent)
 //    scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     search_bar = new QLineEdit(this);
+    search_bar->setObjectName("SearchBar");
     search_bar->setPlaceholderText("search");
     search_bar->setClearButtonEnabled(true);
     search_layout->addWidget(search_bar);
@@ -97,10 +107,13 @@ void SettingsViewer::init(QString ac_id) {
     last_path_index = path_indexes[settings];
 
     auto result_widget = new QWidget(scroll_content);
+    result_widget->setObjectName("Result Widget");
     auto result_layout = new QVBoxLayout(result_widget);
+    result_layout->setObjectName("Result Layout");
     result_layout->addStretch();
     search_result_index = scroll_content->addWidget(result_widget);
     auto search_label = new QLabel("  searching...", path);
+    search_label->setObjectName("Search Label");
     search_path_index = path->addWidget(search_label);
 
 
@@ -134,6 +147,12 @@ void SettingsViewer::create_widgets(SettingMenu* setting_menu, QList<SettingMenu
     auto menu_layout = new QVBoxLayout(widget);
     auto current_path_layout = new QHBoxLayout(path_widget);
 
+    widget->setObjectName(setting_menu->getName());
+    path_widget->setObjectName("Path Widget");
+    menu_layout->setObjectName("Menu Layout");
+    current_path_layout->setObjectName("Current Path Layout");
+
+
     auto new_stack = QList<SettingMenu*>(stack);
     new_stack.append(setting_menu);
 
@@ -141,7 +160,9 @@ void SettingsViewer::create_widgets(SettingMenu* setting_menu, QList<SettingMenu
         for(auto setmm = std::next(new_stack.begin()); setmm != new_stack.end(); ++setmm) {
             auto setm = (*setmm);
             auto sep = new QLabel(">", path_widget);
+            sep->setObjectName("separator");
             auto button = new QPushButton(setm->getName(), path_widget);
+            button->setObjectName(setm->getName());
             sep->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
             button->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
             current_path_layout->addWidget(sep);
@@ -168,6 +189,7 @@ void SettingsViewer::create_widgets(SettingMenu* setting_menu, QList<SettingMenu
 
     for(auto sets: setting_menu->getSettingMenus()) {
         auto button = new QPushButton(sets->getName());
+        button->setObjectName(sets->getName());
         menu_layout->addWidget(button);
 
         setting_menu_widgets[sets] = button;
@@ -206,7 +228,6 @@ void SettingsViewer::populate_search_results(QString searched) {
     restore_searched_items();
 
     QBoxLayout* l = dynamic_cast<QBoxLayout*>(scroll_content->widget(search_result_index)->layout());
-
     // search in Menus
     for(auto sets: setting_menu_widgets.keys()) {
         QString name = sets->getName();
@@ -240,26 +261,35 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
     QHBoxLayout* hlay = new QHBoxLayout();
     vLay->addItem(hlay);
 
+    widget->setObjectName(setting->getName());
+    vLay->setObjectName("Vertical Layout");
+    hlay->setObjectName("Horizontal Layout");
+
     QWidget* label = new QLabel(setting->getName(), widget);
+    label->setObjectName(setting->getName()+" Label");
     label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     hlay->addWidget(label);
 
     QPushButton* value_btn = new QPushButton("?", widget);
+    value_btn->setObjectName("Value Button");
     value_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     hlay->addWidget(value_btn);
     auto ok_btn = new QToolButton(widget);
+    ok_btn->setObjectName("Ok Button");
     ok_btn->setText(QString::fromUtf8("\xE2\x9C\x93"));
     ok_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     ok_btn->setToolTip("commit");
     hlay->addWidget(ok_btn);
 
     auto undo_btn = new QToolButton(widget);
+    undo_btn->setObjectName("Undo Button");
     undo_btn->setText(QString::fromUtf8("\xE2\x86\xA9"));
     undo_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     undo_btn->setToolTip("undo");
     hlay->addWidget(undo_btn);
 
     auto reset_btn = new QToolButton(widget);
+    reset_btn->setObjectName("Reset Button");
     reset_btn->setText(QString::fromUtf8("\xE2\x86\xBA"));
     reset_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     reset_btn->setToolTip("reset to initial");
@@ -296,6 +326,7 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
     if(setting->getValues().size() > 2) {
         // named values -> combo box
         QComboBox* combo = new QComboBox(widget);
+        combo->setObjectName(setting->getName()+" ComboBox");
         for(auto &s:setting->getValues()) {
             combo->addItem(s);
         }
@@ -318,8 +349,10 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
         QHBoxLayout *hbox = new QHBoxLayout;
         Switch* sw = new Switch();
         QLabel* l1 = new QLabel(s1);
+        l1->setObjectName(s1+" Label");
         l1->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         QLabel* l2 = new QLabel(s2);
+        l2->setObjectName(s2+" Label");
         l2->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         hbox->addWidget(l1);
         hbox->addWidget(sw);
@@ -350,6 +383,7 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
         label_setters[setting] = [value_btn](double value) {value_btn->setText(QString::number(value));};
         float value = min;
         QLabel* uniq_val = new QLabel(QString::number(value));
+        uniq_val->setObjectName(setting->getName()+" Value Label");
         uniq_val->setAlignment(Qt::AlignCenter);
         vLay->addWidget(uniq_val);
 
@@ -360,9 +394,12 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
 
     } else {
         DoubleSlider* slider = new DoubleSlider(Qt::Horizontal, widget);
+        slider->setObjectName(setting->getName()+" DoubleSlider");
         QLineEdit* raw_edit = new QLineEdit(widget);
+        raw_edit->setObjectName("Raw Edit Line");
         raw_edit->hide();
         QToolButton* expert_button = new QToolButton(widget);
+        expert_button->setObjectName("Expert Button");
         expert_button->setIcon(QIcon(":/pictures/lock_dark.svg"));
         expert_button->setToolTip("Expert mode");
 
@@ -370,8 +407,10 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
         label_setters[setting] = [value_btn](double value) {value_btn->setText(QString::number(value));};
 
         slider->setDoubleRange(min, max, step);
-        QHBoxLayout* vbox = new QHBoxLayout();
+        QHBoxLayout* hbox = new QHBoxLayout();
+        hbox->setObjectName("Horizontal Layout");
         QLabel* la = new QLabel(QString::number(min, 'f', 2));
+        la->setObjectName("Value Label");
         int precision = 0;
         if(step < 1) {
             precision = static_cast<int>(ceil(abs(log10(step))));
@@ -413,12 +452,12 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
                 raw_edit->setStyleSheet("QLineEdit{background-color: #ffffff;}");
             });
 
-        vbox->addWidget(la);
+        hbox->addWidget(la);
         la->setAlignment(Qt::AlignCenter);
-        vbox->addWidget(slider);
-        vbox->addWidget(raw_edit);
-        vbox->addWidget(expert_button);
-        vLay->addLayout(vbox);
+        hbox->addWidget(slider);
+        hbox->addWidget(raw_edit);
+        hbox->addWidget(expert_button);
+        vLay->addLayout(hbox);
 
         connect(ok_btn, &QToolButton::clicked, this, [=]() {
             auto coef = setting->getAltUnitCoef();
@@ -429,6 +468,7 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
     }
 
     QFrame *line = new QFrame(widget);
+    line->setObjectName("Line Frame");
     vLay->addWidget(line);
     line->setFrameShape(QFrame::HLine);
     line->setFrameShadow(QFrame::Sunken);
@@ -518,6 +558,7 @@ SettingSaver::SettingSaver(QString ac_id, QWidget *parent) : QDialog(parent),
 
 
     auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel, this);
+    buttonBox->setObjectName("Button Box");
     lay->addWidget(buttonBox);
 
     connect(buttonBox->button(QDialogButtonBox::Save), &QPushButton::clicked, this, [=](){

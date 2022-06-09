@@ -8,16 +8,20 @@ Plotter::Plotter(QString ac_id, QWidget *parent) : QWidget(parent),
     ac_id(ac_id)
 {
     auto lay = new QVBoxLayout(this);
+    lay->setObjectName("Layout");
 
     auto top_lay = new QHBoxLayout();
+    top_lay->setObjectName("Top Layout");
     lay->addItem(top_lay);
 
     title = new QLabel("title", this);
+    title->setObjectName("Title Label");
     title->setStyleSheet("font-weight: bold;");
     top_lay->addWidget(title, 0, Qt::AlignHCenter);
     top_lay->setStretch(0, 1);
 
     autoscale_checkbox = new QCheckBox("autoscale", this);
+    autoscale_checkbox->setObjectName("Checkbox Autoscale");
     top_lay->addWidget(autoscale_checkbox);
     connect(autoscale_checkbox, &QCheckBox::stateChanged, this, [=](int state) {
         if(graphs.contains(current_name)) {
@@ -28,6 +32,7 @@ Plotter::Plotter(QString ac_id, QWidget *parent) : QWidget(parent),
     });
 
     history_spinbox = new QSpinBox(this);
+    history_spinbox->setObjectName("History Spinbox");
     top_lay->addWidget(history_spinbox);
     history_spinbox->setRange(1, 999);
     history_spinbox->setToolTip("history (s)");
@@ -38,10 +43,12 @@ Plotter::Plotter(QString ac_id, QWidget *parent) : QWidget(parent),
     });
 
     var_button = new QToolButton(this);
+    var_button->setObjectName("Var Button");
     var_button->setIcon(style()->standardIcon(QStyle::SP_TitleBarUnshadeButton));
     top_lay->addWidget(var_button);
 
     auto close_button = new QToolButton(this);
+    close_button->setObjectName("Close Button");
     close_button->setIcon(style()->standardIcon(QStyle::SP_DialogCloseButton));
     close_button->setToolTip("Close current graph");
     top_lay->addWidget(close_button);
@@ -87,6 +94,7 @@ void Plotter::configure(QDomElement c) {
 
 void Plotter::addGraph(QString name, GraphWidget::Params p) {
     auto graph = new GraphWidget(this);
+    graph->setObjectName("Graph "+name);
     graph_stack->addWidget(graph);
     graphs[name] = graph;
 
@@ -140,7 +148,7 @@ void Plotter::changeGraph(QString name) {
 
 void Plotter::onOpenContextMenu() {
     auto menu = new QMenu(this);
-
+    menu->setObjectName("Plotter Menu");
     for(auto gr=graphs.begin(); gr!=graphs.end(); ++gr) {
         auto action = menu->addAction(gr.key());
         connect(action, &QAction::triggered, this, [=]() {
@@ -149,13 +157,16 @@ void Plotter::onOpenContextMenu() {
     }
 
     auto groundMenu = menu->addMenu("ground");
+    groundMenu->setObjectName("groundMenu");
 
     auto msg_dict = PprzDispatcher::get()->getDict();
     for(auto &def: msg_dict->getMsgsForClass("ground")) {
         auto msg_menu = groundMenu->addMenu(def.getName());
+        msg_menu->setObjectName(def.getName()+" Menu");
         for(size_t i=0; i < def.getNbFields(); ++i) {
             auto f = def.getField(static_cast<int>(i));
             auto f_action = msg_menu->addAction(f.getName());
+            f_action->setObjectName(f.getName()+" Action");
             connect(f_action, &QAction::triggered, this, [=]() {
                 auto name = "ground:" +  def.getName() + ":" + f.getName();
                 addGraph(name, {100, 0, true});

@@ -152,6 +152,6 @@ QWidget* makeWidget(QWidget* parent, QString container, QString name, QString al
         std::string s = "Widget " + name.toStdString() + " unknown";
         throw runtime_error(s);
     }
-
+    widget->setObjectName(name);
     return widget;
 }

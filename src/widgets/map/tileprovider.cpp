@@ -18,7 +18,9 @@ TileProvider::TileProvider(TileProviderConfig* config, int z, int displaySize, Q
 {
     motherTile = new TileItem(nullptr, tileDisplaySize, Point2DTile(0, 0, 0));
     manager = new QNetworkAccessManager(this);
+    manager->setObjectName("TileProviderManager");
     diskCache = new QNetworkDiskCache(this);
+    diskCache->setObjectName("TileProviderDiskCache");
     diskCache->setCacheDirectory(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
     manager->setCache(diskCache);
 

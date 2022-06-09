@@ -10,30 +10,37 @@ Commands::Commands(QString ac_id, QWidget *parent) : QWidget(parent),
     ac_id(ac_id)
 {
     auto lay = new QVBoxLayout(this);
+    lay->setObjectName("Commands Layout");
     lay->setSizeConstraint(QLayout::SetFixedSize);
 
     auto name = AircraftManager::get()->getAircraft(ac_id)->name();
     auto name_label = new QLabel(name, this);
+    name_label->setObjectName("NameLabel");
     name_label->setStyleSheet("font-weight: bold");
     lay->addWidget(name_label);
 
     auto spe_cmd_lay = new QGridLayout();
+    spe_cmd_lay->setObjectName("spe_cmd_layout");
     addSpecialCommands(spe_cmd_lay);
     lay->addLayout(spe_cmd_lay);
 
     auto line = new QFrame(this);
+    line->setObjectName("LineFrame");
     line->setFrameShape(QFrame::HLine);
     lay->addWidget(line);
 
     auto fp_lay = new QGridLayout();
+    fp_lay->setObjectName("FlightPlan Layout");
     addFlightPlanButtons(fp_lay);
     lay->addLayout(fp_lay);
 
     auto line2 = new QFrame(this);
+    line2->setObjectName("Line2Frame");
     line2->setFrameShape(QFrame::HLine);
     lay->addWidget(line2);
 
     auto set_lay = new QGridLayout();
+    set_lay->setObjectName("Settings Layout");
     addSettingsButtons(set_lay);
     lay->addLayout(set_lay);
 
@@ -84,6 +91,7 @@ void Commands::addFlightPlanButtons(QGridLayout* fp_buttons_layout) {
             }
 
             if(b != nullptr) {
+                b->setObjectName(txt);
                 fp_buttons_layout->addWidget(b, row, col);
                   connect(b, &QPushButton::clicked, this,
                     [=]() {
@@ -124,6 +132,7 @@ void Commands::addSettingsButtons(QGridLayout* settings_buttons_layout) {
             }
 
             if(b != nullptr) {
+                b->setObjectName(name);
                 settings_buttons_layout->addWidget(b, row, col);
                   connect(b, &QPushButton::clicked, this,
                     [=]() {
@@ -205,6 +214,7 @@ void Commands::addSpecialCommands(QGridLayout* glay) {
 void Commands::addCommandButton(QGridLayout* glay,QString icon, int row, int col, std::function<void()> callback, QString tooltip) {
     auto button = new QToolButton(this);
     QString icon_path = appConfig()->value("GCS_ICONS_PATH").toString() + "/" + icon;
+    button->setObjectName(tooltip);
     button->setIcon(QIcon(icon_path));
     button->setToolTip(tooltip);
     glay->addWidget(button, row, col);

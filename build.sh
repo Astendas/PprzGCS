@@ -24,6 +24,9 @@ then
     pprzlinkqt_src=$WD/ext/pprzlinkQt/
     pprzlinkqt_build=$WD/build/ext/pprzlinkQt
     
+    liblsl_src=$WD/ext/liblsl
+    liblsl_build=$WD/build/ext/liblsl
+    
     cmake -S $ivyqt_src -B $ivyqt_build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$install_prefix
     cmake --build $ivyqt_build
     cmake --install $ivyqt_build
@@ -31,6 +34,10 @@ then
     cmake -S $pprzlinkqt_src -B $pprzlinkqt_build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$install_prefix
     cmake --build $pprzlinkqt_build
     cmake --install $pprzlinkqt_build
+    
+    cmake -S $liblsl_src -B $liblsl_build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=$install_prefix
+    cmake --build $liblsl_build
+    cmake --install $liblsl_build
 fi
 
 if [ $build_app = "app" ]

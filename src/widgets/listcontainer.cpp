@@ -14,13 +14,16 @@ ListContainer::ListContainer(std::function<QWidget*(QString, QWidget*)> construc
     alt_constructor(alt_constructor)
 {
     auto scroll_content = new QWidget(this);
+    scroll_content->setObjectName("Scroll Content");
     setWidget(scroll_content);
     setWidgetResizable(true);
     setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     auto vbox = new QVBoxLayout(scroll_content);
+    vbox->setObjectName("Vertical Layout");
     grid_layout = new QGridLayout();
+    grid_layout->setObjectName("Grid Layout");
     vbox->addLayout(grid_layout);
     vbox->addStretch(1);
 
@@ -56,6 +59,7 @@ void ListContainer::handleNewAC(QString ac_id) {
         lay->addWidget(label);
         lay->addStretch();
     }
+    pageWidget->setObjectName("Page Widget");
     widgets[ac_id] = pageWidget;
     auto row = grid_layout->rowCount();
     grid_layout->addWidget(pageWidget, row, 1);
@@ -63,9 +67,12 @@ void ListContainer::handleNewAC(QString ac_id) {
 
     auto ac = AircraftManager::get()->getAircraft(ac_id);
     auto header = new QWidget(this);
+    header->setObjectName("Header Widget");
     auto header_vbox = new QVBoxLayout(header);
+    header_vbox->setObjectName("Header Layout");
 
     auto select_ac_button = new QToolButton(header);
+    select_ac_button->setObjectName("Select AC Button");
     select_ac_button->setMinimumSize(QSize(20, 20));
     select_ac_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     select_ac_button->setStyleSheet("background: " + ac->getColor().name());
@@ -75,6 +82,7 @@ void ListContainer::handleNewAC(QString ac_id) {
         action_button->setArrowType(Qt::DownArrow);
         header_vbox->addWidget(action_button);
         QWidget* alt_widget = alt_constructor(ac_id, nullptr);
+        alt_widget->setObjectName("Alt Widget");
         alt_widgets[ac_id] = alt_widget;
         alt_widget->setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
 

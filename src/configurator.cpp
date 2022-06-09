@@ -58,6 +58,7 @@ QWidget* rec_layout_build(QDomElement &ele, QSplitter* parent, int* size) {
         QString alt = ele.attribute("alt", "");
 
         QWidget* widget = makeWidget(parent, container, name, alt);
+        
 
         for(auto layout_ele=ele.firstChildElement(); !layout_ele.isNull(); layout_ele=layout_ele.nextSiblingElement()) {
             if(layout_ele.tagName() == "configure") {
@@ -73,7 +74,6 @@ QWidget* rec_layout_build(QDomElement &ele, QSplitter* parent, int* size) {
                 exit(-1);
             }
         }
-
         if(parent != nullptr) {
             parent->addWidget(widget);
         } else {
@@ -159,10 +159,10 @@ PprzMain* configure(QString filename) {
     QDomElement first_element = layout_ele.firstChildElement();
     int s;
     QWidget* widget = rec_layout_build(first_element, nullptr, &s);
+    widget->setObjectName("centralWidget");
 
     auto window = pprzApp()->mainWindow();
     window->setupUi(width, height, widget);
-
 
     //configure speech
     configure_speech(root.firstChildElement("speech"));

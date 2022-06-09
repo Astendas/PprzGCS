@@ -6,6 +6,10 @@
 #include "units.h"
 #include "dispatcher_ui.h"
 
+#if defined(ADAPTIVE_ENABLED)
+#include "networkAdapter.h"
+#endif
+
 #if defined(SPEECH_ENABLED)
 #include "speaker.h"
 #endif
@@ -21,6 +25,12 @@ PprzToolbox::PprzToolbox(PprzApplication* app)
 #if defined(SPEECH_ENABLED)
     _speaker              = new Speaker             (app, this);
 #endif
+
+#if defined(ADAPTIVE_ENABLED)
+    if(adaptive){
+    _networkAdapter       = new NetworkAdapter      (app, this);
+    }
+#endif
 }
 
 void PprzToolbox::setChildToolboxes(void) {
@@ -32,6 +42,11 @@ void PprzToolbox::setChildToolboxes(void) {
     _dispatcherUi->setToolbox(this);
 #if defined(SPEECH_ENABLED)
     _speaker->setToolbox(this);
+#endif
+#if defined(ADAPTIVE_ENABLED)
+    if(adaptive){
+        _networkAdapter->setToolbox(this);
+    }
 #endif
 }
 

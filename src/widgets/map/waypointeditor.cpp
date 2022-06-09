@@ -16,10 +16,13 @@ WaypointEditor::WaypointEditor(WaypointItem* wi, QString ac_id, QWidget *parent)
     setWindowTitle(QString(wi->waypoint()->getName()));
 
     auto lay = new QVBoxLayout(this);
+    lay->setObjectName("WaypointEditor Layout");
     auto infoLay = new QVBoxLayout();
+    infoLay->setObjectName("WaypointEditor Layout");
     lay->addLayout(infoLay);
 
     auto combo = new QComboBox(this);
+    combo->setObjectName("WaypointEditor ComboBox");
     combo->addItem(WGS84);
     combo->addItem(WGS84_SEXA);
     combo->addItem(REF0);
@@ -29,31 +32,43 @@ WaypointEditor::WaypointEditor(WaypointItem* wi, QString ac_id, QWidget *parent)
     infoLay->addWidget(combo);
 
     auto latLay = new QHBoxLayout();
+    latLay->setObjectName("latLayout");
     auto axis1_label = new QLabel("lat", this);
+    axis1_label->setObjectName("axis1Label");
     latLay->addWidget(axis1_label);
     auto latEdit = new QLineEdit(QString::number(wi->waypoint()->getLat()), this);
+    latEdit->setObjectName("LatEdit");
     latLay->addWidget(latEdit);
 
     auto lonLay = new QHBoxLayout();
+    lonLay->setObjectName("LonLayout");
     auto axis2_label = new QLabel("lon", this);
+    axis2_label->setObjectName("axis2Label");
     lonLay->addWidget(axis2_label);
     auto lonEdit = new QLineEdit(QString::number(wi->waypoint()->getLon()), this);
+    lonEdit->setObjectName("LonEdit");
     lonLay->addWidget(lonEdit);
 
     auto altLay = new QHBoxLayout();
+    altLay->setObjectName("AltLayout");
     altLay->addWidget(new QLabel("alt", this));
     auto altSpin = new QDoubleSpinBox(this);
+    altSpin->setObjectName("altSpin");
     altSpin->setMinimum(-100);
     altSpin->setMaximum(5000);
     altSpin->setValue(wi->waypoint()->getAlt());
     altLay->addWidget(altSpin);
 
     auto aglLabel =new QLabel(this);
+    aglLabel->setObjectName("aglLabel");
     altLay->addWidget(aglLabel);
 
     auto butLay = new QHBoxLayout();
+    butLay->setObjectName("ButtonLayout");
     auto upButton = new QPushButton(this);
+    upButton->setObjectName("upButton");
     auto downButton = new QPushButton(this);
+    downButton->setObjectName("downButton");
     upButton->setText("+10");
     downButton->setText("-10");
     butLay->addWidget(downButton);
@@ -183,6 +198,7 @@ WaypointEditor::WaypointEditor(WaypointItem* wi, QString ac_id, QWidget *parent)
 
 
     auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    buttonBox->setObjectName("buttonBox");
     lay->addWidget(buttonBox);
 
     connect(buttonBox->button(QDialogButtonBox::Ok), &QPushButton::clicked, this, [=](){

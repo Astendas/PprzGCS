@@ -5,7 +5,7 @@ ACItemManager::ACItemManager(QString ac_id, WaypointItem* target, AircraftItem* 
     ac_id(ac_id), target(target), aircraft_item(aircraft_item),
     current_nav_shape(nullptr), max_dist_circle(nullptr), arrow_item(arrow)
 {
-
+    setObjectName(ac_id);
 }
 
 void ACItemManager::addWaypointItem(WaypointItem* wi) {

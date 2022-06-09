@@ -4,9 +4,13 @@
 LayerCombo::LayerCombo(QWidget *parent) : QWidget(parent), moved_layer_control(nullptr)
 {
     scroll = new QScrollArea(this);
+    scroll->setObjectName("LayerCombo Scroll");
     scroll_content = new QWidget(scroll);
+    scroll_content->setObjectName("ScrollContent");
     content_layout = new QVBoxLayout(scroll_content);
+    content_layout->setObjectName("Content Layout");
     main_layout  = new QVBoxLayout(this);
+    main_layout->setObjectName("LayerCombo MainLayout");
     main_layout->addWidget(scroll);
     scroll->setWidget(scroll_content);
     scroll->setWidgetResizable(true);
@@ -15,6 +19,7 @@ LayerCombo::LayerCombo(QWidget *parent) : QWidget(parent), moved_layer_control(n
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     moved_thumbnail = new QLabel();
+    moved_thumbnail->setObjectName("movedThumbnail");
     moved_thumbnail->setWindowFlag(Qt::SubWindow);
     moved_thumbnail->setWindowFlag(Qt::FramelessWindowHint);
     moved_thumbnail->setWindowFlag(Qt::WindowStaysOnTopHint);

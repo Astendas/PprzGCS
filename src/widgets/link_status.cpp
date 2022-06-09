@@ -5,6 +5,7 @@ LinkStatus::LinkStatus(QString ac_id, QWidget *parent) : QWidget(parent),
     ac_id(ac_id)
 {
     grid_layout = new QGridLayout(this);
+    grid_layout->setObjectName("LinkStatus GridLayout");
 
     t_link_id = new QLabel("Link id:", this);
     t_status = new QLabel("Status:", this);
@@ -12,6 +13,14 @@ LinkStatus::LinkStatus(QString ac_id, QWidget *parent) : QWidget(parent),
     t_link_rx = new QLabel("Link Rx [Bytes/s]", this);
     t_downlink = new QLabel("Downlink [Byte/s]", this);
     t_uplink_lost = new QLabel("Uplink lost [s]", this);
+
+    t_link_id->setObjectName("Link id Label");
+    t_status->setObjectName("Status Label");
+    t_ping_time->setObjectName("Ping Time Label");
+    t_link_rx->setObjectName("Link Rx Label");
+    t_downlink->setObjectName("Downlink Label");
+    t_uplink_lost->setObjectName("Uplink Label");
+    
 
     grid_layout->addWidget(t_link_id,     0, 0);
     grid_layout->addWidget(t_status,      1, 0);
@@ -52,6 +61,16 @@ void LinkStatus::updateData() {
             links[it.key()] = l;
 
             l.link_id->setStyleSheet("font-weight: bold;");
+
+            l.link_id->setObjectName("Link Id");
+            l.status->setObjectName("Status");
+            l.ping_time->setObjectName("Ping Time");
+            l.link_rx->setObjectName("Link RX");
+            l.downlink->setObjectName("Downlink");
+            l.uplink_lost->setObjectName("Uplink Lost");
+
+
+
 
             int col = grid_layout->columnCount();
             grid_layout->addWidget(l.link_id, 0, col, Qt::AlignCenter);
