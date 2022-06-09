@@ -16,6 +16,7 @@ class DispatcherUi;
 class NetworkAdapter;
 #endif
 
+class Watcher;
 #if defined(SPEECH_ENABLED)
 class Speaker;
 #endif
@@ -32,6 +33,7 @@ public:
     CoordinatesTransform* coordinatesTransform () {return _coordinatesTransform;}
     Units*                units                () {return _units               ;}
     DispatcherUi*         dispatcherUi         () {return _dispatcherUi        ;}
+    Watcher*              watcher              () {return _watcher             ;}
 #if defined(SPEECH_ENABLED)
     Speaker*              speaker              () {return _speaker             ;}
 #endif
@@ -48,6 +50,7 @@ private:
     CoordinatesTransform* _coordinatesTransform = nullptr;
     Units*                _units                = nullptr;
     DispatcherUi*         _dispatcherUi         = nullptr;
+    Watcher*              _watcher              = nullptr;
 #if defined(SPEECH_ENABLED)
     Speaker* _speaker                           = nullptr;
 #endif
