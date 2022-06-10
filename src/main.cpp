@@ -5,6 +5,7 @@
 #include <QNetworkProxy>
 #include <QProcessEnvironment>
 #include "pprz_dispatcher.h"
+#include "networkAdapter.h"
 #include <QWizard>
 #include "app_settings.h"
 #include "gcs_utils.h"
@@ -38,7 +39,6 @@ void launch_main_app() {
     qApp->setStyleSheet(stream.readAll());
 
     QString layout_path;
-
     switch (PprzMain::launch_type) {
     case DEFAULT:
     case NORMAL:
@@ -52,7 +52,6 @@ void launch_main_app() {
     case QUIT:
         break;
     }
-
     if(PprzMain::launch_type == CONFIGURE) {
         auto setedit = new SettingsEditor(true);
         setedit->show();
@@ -93,8 +92,8 @@ int main(int argc, char *argv[])
         parser.addOption({"speech", "Enable speech"});
 #endif
 #if defined(ADAPTIVE_ENABLED)
-        parser.addOption({{"a","Adaptive"},"Adaptive Interface Mode"});
-        parser.addOption({{"debugeye","Debug eyetracking"},"Show eye tracking movement on screen"});
+        parser.addOption({{"a","adaptive"},"Adaptive Interface Mode"});
+        parser.addOption({{"d","debugeyetrack"},"Show eye tracking movement on screen"});
 #endif
         parser.process(a);
 
@@ -106,7 +105,9 @@ int main(int argc, char *argv[])
 #endif
 #if defined(ADAPTIVE_ENABLED)
         pprzApp()->toolbox()->setAdaptive(parser.isSet("a"));
-        //pprzApp()->toolbox()->networkAdapter()->setDebug(parser.isSet("debugeye"));
+        if(parser.isSet("a")){
+                NetworkAdapter::get()->setDebug(parser.isSet("d"));
+            }
 #endif
 
         if(parser.isSet("fpedit") && PprzMain::launch_type == DEFAULT) {
@@ -138,11 +139,9 @@ int main(int argc, char *argv[])
         gconfig->setValue("APP_DATA_PATH", data_path);
 
         set_app_settings();
-
         a.init();
 
         PprzDispatcher::get()->setSilent(parser.isSet("silent"));
-
 
         launch_main_app();
 

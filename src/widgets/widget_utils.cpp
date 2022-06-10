@@ -143,7 +143,6 @@ QWidget* makeWidget(QWidget* parent, QString container, QString name, QString al
         } else {
             widget = make_container(container, parent, ac_widget_index->second);
         }
-
     }
     else if(simple_widget_index != SIMPLE_WIDGETS_MAP.end()) {
         widget = createInstance(simple_widget_index->second, parent);

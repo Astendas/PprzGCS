@@ -60,9 +60,12 @@ void NetworkAdapter::setToolbox(PprzToolbox* toolbox) {
             flashAlertWidget();
         }
     });
+    bus->bindMessage("FlashRed",[=](Peer*,QStringList args){
+        (void)args;
+        flashAlertWidget();
+    });
     bus->bindMessage("EyeGazePosition X=(.*) Y=(.*)",[=](Peer*,QStringList args){
         QPoint* p=new QPoint(args[0].toInt(),args[1].toInt());
-
         //check if we are in a fixation, temporary algo
         if(sqrt(((p->x()-previous_point->x())^2) + ((p->y()-previous_point->y())^2))<20){
             radius+=2;
@@ -71,11 +74,24 @@ void NetworkAdapter::setToolbox(PprzToolbox* toolbox) {
         }
 
         previous_point=p;
-        QWidget* w=search_pos(pprzApp()->mainWindow()->centralWidget()->findChild<QWidget*>("centralWidget"),p);
-        if(w!=nullptr){
-            cout<<"widget = "+w->objectName().toStdString()<<endl;
+        //QWidget* w=search_pos(pprzApp()->mainWindow(),p);
+        QPoint p2=pprzApp()->mainWindow()->mapFromGlobal(*p);
+        QWidget* t=pprzApp()->widgetAt(*p);
+        QObject* e=t;
+        int i=0;
+        while(e!=nullptr){
+            int a=i;
+            while(a--){
+                cout<<"  ";
+            }
+            i++;
+            cout<<"Widget: "+e->objectName().toStdString()<<endl;
+            e=(e->parent());
+        }
+        if(t!=nullptr){
+            //cout<<"widget = "+w->objectName().toStdString()<<endl;
             if(debug){
-                flashEyeTrack(p,radius);
+                flashEyeTrack(&p2,radius);
             }
         }
     });
@@ -102,8 +118,9 @@ void NetworkAdapter::flashAlertWidget(){
 
 void NetworkAdapter::flashEyeTrack(int x,int y,int radius){
     //create a red circle on the screen
-    pprzApp()->mainWindow()->getEyeTrack()->setGeometry(x-10,y-10,2*radius,2*radius);
+    pprzApp()->mainWindow()->getEyeTrack()->setGeometry(x-radius,y-radius,2*radius,2*radius);
     pprzApp()->mainWindow()->getEyeTrack()->setRadius(radius);
+    pprzApp()->mainWindow()->getEyeTrack()->raise();
     pprzApp()->mainWindow()->getEyeTrack()->show();
     QTimer::singleShot(5000,[&](){pprzApp()->mainWindow()->getEyeTrack()->hide();});
 }
@@ -145,7 +162,7 @@ QWidget* NetworkAdapter::search_pos(QObject* parent,int x,int y,int prof){
                     //we keep track of the depth, still unused
                     result=search_pos(w,x,y,prof+1);
                 }
-                //more than 1 widget with good coordinate
+                //more than 1 child widget with contains the point?
                 if(nb>1){
                     result=w->parentWidget();
                 }
@@ -168,12 +185,9 @@ QWidget* NetworkAdapter::search_pos(QObject* parent, QPoint* p,int prof){
 void NetworkAdapter::setLSLStatus(){
     pprzApp()->mainWindow()->setLSLStatus(true);
 }
-void NetworkAdapter::setDebug(bool value){
-    debug=value;
-}
 
 
-
+//ntthread is a QThread in charge of LSL communication, code was removed for now
 //netthread running member
 void netthread::run(){
     

@@ -10,6 +10,7 @@
 FlightPlanViewerV2::FlightPlanViewerV2(QString ac_id, QWidget *parent) : QTabWidget(parent),
     ac_id(ac_id), current_block(0), current_stage(0), labels_stylesheet("")
 {
+    setObjectName("FlightPlanViewer");
     addTab(make_blocks_tab(), "Blocks");
     auto flight_plan_editor=new FlightPlanEditor(ac_id, this);
     flight_plan_editor->setObjectName("FlightPlanEditor");

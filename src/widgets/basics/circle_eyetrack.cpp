@@ -6,9 +6,9 @@
 #include <math.h>
 
 CircleEyeTrack::CircleEyeTrack(qreal radius,QWidget *parent) : QWidget(parent)
-    ,brush(Qt::red),minSize(QSize(10, 10)),radius(radius)
+    ,brush(Qt::red),minSize(QSize(50, 50)),radius(radius)
 {
-
+    setObjectName("Eye Track");
 }
 
 void CircleEyeTrack::paintEvent(QPaintEvent *e) {

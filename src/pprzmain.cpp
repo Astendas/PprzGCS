@@ -35,7 +35,8 @@ void PprzMain::setupUi(int width, int height, QWidget* centralWidget) {
     //add the alert overlay (red flashing overlay)
     #if defined(ADAPTIVE_ENABLED)
     alertWidget=createAlertWidget(MainContainer);
-    eyeTrack=new CircleEyeTrack(0,MainContainer);
+    eyeTrack=new CircleEyeTrack(5,this);
+    eyeTrack->setAttribute(Qt::WA_TransparentForMouseEvents);
     eyeTrack->raise();
     eyeTrack->hide();
     #endif
@@ -293,7 +294,7 @@ void PprzMain::readWidget(QObject* main,int prof){
     cout<<layer+"Widget :"+main->objectName().toStdString()<<endl;
     if(!list.isEmpty()){
         foreach(auto obj,list){
-            if(main->objectName().toStdString()!=""||true){readWidget(obj,prof+1);}
+            if(main->objectName().toStdString()!=""){readWidget(obj,prof+1);}
         }
     }
 }

@@ -15,7 +15,10 @@ class NetworkAdapter : public PprzTool{
     public:
         explicit NetworkAdapter(PprzApplication* app, PprzToolbox* toolbox);
         virtual void setToolbox(PprzToolbox* toolbox) override;
-        void setDebug(bool value);
+        static NetworkAdapter* get() {
+        return pprzApp()->toolbox()->networkAdapter();
+    }
+        void setDebug(bool value){debug=value;};
 
         
         
@@ -26,7 +29,6 @@ class NetworkAdapter : public PprzTool{
         void flashAlertWidget();
         void setLSLStatus();
         void flashAlertWidget(QColor color,int time);
-        void hideWidget(QWidget* widget);
     private:
 
         bool debug=false;

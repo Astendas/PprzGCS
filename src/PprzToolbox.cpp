@@ -29,9 +29,7 @@ PprzToolbox::PprzToolbox(PprzApplication* app)
 #endif
 
 #if defined(ADAPTIVE_ENABLED)
-    if(adaptive){
     _networkAdapter       = new NetworkAdapter      (app, this);
-    }
 #endif
 }
 
