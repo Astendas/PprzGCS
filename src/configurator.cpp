@@ -29,8 +29,10 @@ QWidget* rec_layout_build(QDomElement &ele, QSplitter* parent, int* size) {
         splitter->setChildrenCollapsible(false);
         if(ele.tagName()=="rows") {
             splitter->setOrientation(Qt::Vertical);
+            splitter->setObjectName("Vertical Splitter");
         } else{
             splitter->setOrientation(Qt::Horizontal);
+            splitter->setObjectName("Horizontal Splitter");
         }
 
         QList<int> sizes;

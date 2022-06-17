@@ -5,7 +5,9 @@
 
 ListContainer::ListContainer(std::function<QWidget*(QString, QWidget*)> constructor, QWidget *parent) :
     ListContainer(constructor, nullptr, parent)
-{}
+{
+    setObjectName("ListContainer");
+}
 
 ListContainer::ListContainer(std::function<QWidget*(QString, QWidget*)> constructor,
                              std::function<QWidget*(QString, QWidget*)> alt_constructor,
@@ -42,6 +44,7 @@ void ListContainer::handleNewAC(QString ac_id) {
     QWidget* pageWidget;
     try {
         pageWidget = constructor(ac_id, this);
+        pageWidget->setObjectName("Page Widget container for ac: "+ac_id);
         if(!conf.isNull()) {
             Configurable* c = dynamic_cast<Configurable*>(pageWidget);
             if(c != nullptr) {
@@ -59,7 +62,6 @@ void ListContainer::handleNewAC(QString ac_id) {
         lay->addWidget(label);
         lay->addStretch();
     }
-    pageWidget->setObjectName("Page Widget");
     widgets[ac_id] = pageWidget;
     auto row = grid_layout->rowCount();
     grid_layout->addWidget(pageWidget, row, 1);
@@ -79,6 +81,7 @@ void ListContainer::handleNewAC(QString ac_id) {
     header_vbox->addWidget(select_ac_button);
     if(alt_constructor != nullptr) {
         auto action_button = new QToolButton(header);
+        action_button->setObjectName("action_button QToolButton");
         action_button->setArrowType(Qt::DownArrow);
         header_vbox->addWidget(action_button);
         QWidget* alt_widget = alt_constructor(ac_id, nullptr);

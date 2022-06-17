@@ -29,17 +29,31 @@ class NetworkAdapter : public PprzTool{
         void flashAlertWidget();
         void setLSLStatus();
         void flashAlertWidget(QColor color,int time);
+        void flashWidget(QWidget* w);
     private:
 
         bool debug=false;
 
+        QPoint* last_point;
+        clock_t time_fixation;
+        QString last_state;
+        float last_index;
+        QQueue<QWidget*>* looked_at_widget;
+
+
         IvyQt* bus;
-        QPoint* previous_point;
         qreal radius;
         QWidget* search_pos(QObject* parent,int x, int y,int prof=0);
         QWidget* search_pos(QObject* parent,QPoint* p,int prof=0);
         void flashEyeTrack(int x,int y,int radius);
         void flashEyeTrack(QPoint* p,int radius);
+        void setup_ui();
+
+        bool setup;
+        QFrame* instruction;
+        QLabel* heading;
+        QLabel* alt;
+        QLabel* speed;
 };
 
 class netthread : public QThread {

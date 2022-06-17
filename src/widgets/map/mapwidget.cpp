@@ -348,7 +348,6 @@ void MapWidget::addItem(MapItem* map_item) {
     map_item->updateGraphics(this, UpdateEvent::ANY);
     _items.append(map_item);
     emit itemAdded(map_item);
-    map_item->setObjectName("map_Item");
 
     map_item->setHighlighted(map_item->acId() == current_ac || map_item->acId() == "__NO_AC__");
 
@@ -684,10 +683,12 @@ void MapWidget::handleNewAC(QString ac_id) {
     if(ac->isReal()) {
         // create aircraft item at dummy position
         auto aircraft_item = new AircraftItem(Point2DLatLon(0, 0), ac_id, 16);
+        aircraft_item->setObjectName("Aircraft "+ac_id+" mapItem");
         addItem(aircraft_item);
 
         //create carrot at dummy position
         WaypointItem* target = new WaypointItem(Point2DLatLon(0, 0), ac_id);
+        target->setObjectName("target mapItem");
         addItem(target);
         target->setStyle(GraphicsObject::Style::CARROT);
         target->setEditable(false);
@@ -695,6 +696,7 @@ void MapWidget::handleNewAC(QString ac_id) {
         target->setZValues(z_carrot, z_carrot);
 
         ArrowItem* arrow = new ArrowItem(ac_id, 15, this);
+        arrow->setObjectName("arrow mapItem");
         addItem(arrow);
         arrow->setProperty("size", _ac_arrow_size);
 
@@ -709,7 +711,7 @@ void MapWidget::handleNewAC(QString ac_id) {
         //create the ACItemManager for this fake aircraft (flightplan only)
         item_manager = new ACItemManager(ac_id, nullptr, nullptr, nullptr, this);
     }
-
+    item_manager->setObjectName(ac_id+" itemManager");
     ac_items_managers[ac_id] = item_manager;
 
     auto fp = ac->getFlightPlan();
@@ -721,6 +723,7 @@ void MapWidget::handleNewAC(QString ac_id) {
     for(auto sector: fp->getSectors()) {
         // static sector are not supported
         PathItem* pi = new PathItem(ac_id, sector->getColor());
+        pi->setObjectName("path "+ac_id+ " sector"+ sector->getName()+" mapItem");
         for(auto &wp: sector->getCorners()) {
             for(auto wpi: item_manager->getWaypointsItems()) {
                 if(wpi->getOriginalWaypoint() == wp) {
@@ -760,6 +763,7 @@ void MapWidget::onWaypointChanged(Waypoint* wp, QString ac_id) {
 
 void MapWidget::onWaypointAdded(Waypoint* wp, QString ac_id) {
     WaypointItem* wpi = new WaypointItem(wp, ac_id);
+    wpi->setObjectName("Waypoint "+wp->getName()+" mapItem");
     addItem(wpi);
     ac_items_managers[ac_id]->addWaypointItem(wpi);
 
@@ -768,6 +772,7 @@ void MapWidget::onWaypointAdded(Waypoint* wp, QString ac_id) {
         auto we = new WaypointEditor(wpi, ac_id);
         auto view_pos = mapFromScene(wpi->scenePos());
         auto global_pos = mapToGlobal(view_pos);
+        we->setObjectName("Waypoint editor");
         we->show(); //show just to get the width and height right.
         we->move(global_pos - QPoint(we->width()/2, we->height()/2));
         connect(we, &QDialog::finished, wpi, [=](int result) {
@@ -796,6 +801,8 @@ void MapWidget::onWaypointAdded(Waypoint* wp, QString ac_id) {
     if(wp->getName() == "HOME") {
         auto fp = AircraftManager::get()->getAircraft(ac_id)->getFlightPlan();
         auto ci = new CircleItem(wpi, fp->getMaxDistFromHome(), ac_id);
+        ci->setObjectName("Circle mapItem");
+        wpi->setParent(ci);
         ci->setEditable(false);
         addItem(ci);
         ac_items_managers[ac_id]->setMaxDistCircle(ci);
@@ -857,9 +864,12 @@ void MapWidget::updateNavShape(pprzlink::Message msg) {
         if(ci == nullptr) {
             delete_prev();
             auto wcenter = new WaypointItem(pos, ac_id);
+            wcenter->setObjectName("center Waypoint mapItem");
             wcenter->setZValues(z, z);
             addItem(wcenter);
             ci = new CircleItem(wcenter, radius, ac_id);
+            ci->setObjectName("Circle mapItem");
+            wcenter->setParent(ci);
             ci->setZValues(z, z);
             ci->setScalable(false);
             ci->setEditable(false);
@@ -889,12 +899,17 @@ void MapWidget::updateNavShape(pprzlink::Message msg) {
             delete_prev();
 
             pi = new PathItem(ac_id);
+            pi->setObjectName("path "+ac_id+" mapItem");
             pi->setZValues(z, z);
 
             auto w1 = new WaypointItem(p1, ac_id);
+            w1->setObjectName("path waypoint mapItem");
+            w1->setParent(pi);
             w1->setZValues(z, z);
             addItem(w1);
             auto w2 = new WaypointItem(p2, ac_id);
+            w2->setObjectName("path waypoint mapItem");
+            w2->setParent(pi);
             w2->setZValues(z, z);
             addItem(w2);
             pi->addPoint(w1);
@@ -1065,6 +1080,7 @@ void MapWidget::onShape(QString sender, pprzlink::Message msg) {
         pi->setZValues(z, z);
         for(auto pos: points) {
             auto wi = new WaypointItem(pos, "__NO_AC__", palette);
+            wi->setObjectName("waypoint mapItem");
             //wcenter->setEditable(false);
             //wcenter->setZValues(z, z);
             addItem(wi);
@@ -1108,6 +1124,7 @@ void MapWidget::onIntruder(QString sender, pprzlink::Message msg) {
     auto pos = Point2DLatLon(lat/1e7, lon/1e7);
 
     auto itd = new IntruderItem(name, pos, course);
+    itd->setObjectName("intruder mapItem");
     addItem(itd);
 
     intruders[id] = make_pair(itd, QTime::currentTime());
@@ -1125,6 +1142,7 @@ void MapWidget::onGCSPos(pprzlink::Message msg) {
     QColor color(settings.value("map/gcs_icon_color").toString());
 
     auto wcenter = new WaypointItem(Point2DLatLon(lat, lon), "__NO_AC__", PprzPalette(color));
+    wcenter->setObjectName("waypoint center mapItem");
     wcenter->setEditable(false);
     //wcenter->setZValues(z, z);
     addItem(wcenter);

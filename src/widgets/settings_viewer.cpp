@@ -147,7 +147,7 @@ void SettingsViewer::create_widgets(SettingMenu* setting_menu, QList<SettingMenu
     auto menu_layout = new QVBoxLayout(widget);
     auto current_path_layout = new QHBoxLayout(path_widget);
 
-    widget->setObjectName(setting_menu->getName());
+    widget->setObjectName(setting_menu->getName()+" Menu");
     path_widget->setObjectName("Path Widget");
     menu_layout->setObjectName("Menu Layout");
     current_path_layout->setObjectName("Current Path Layout");
@@ -189,7 +189,7 @@ void SettingsViewer::create_widgets(SettingMenu* setting_menu, QList<SettingMenu
 
     for(auto sets: setting_menu->getSettingMenus()) {
         auto button = new QPushButton(sets->getName());
-        button->setObjectName(sets->getName());
+        button->setObjectName(sets->getName()+" Button");
         menu_layout->addWidget(button);
 
         setting_menu_widgets[sets] = button;

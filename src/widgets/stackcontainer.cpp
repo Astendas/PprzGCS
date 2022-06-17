@@ -7,19 +7,23 @@ StackContainer::StackContainer(std::function<QWidget*(QString, QWidget*)> constr
                                [[maybe_unused]] std::function<QWidget*(QString, QWidget*)> alt_constructor,
                                QWidget *parent) : StackContainer(constructor, parent)
 {
-
+    setObjectName("stackContainer");
 }
 
 StackContainer::StackContainer(std::function<QWidget*(QString, QWidget*)> constructor, QWidget *parent) : QWidget(parent),
     constructor(constructor)
 {
     vLayout = new QVBoxLayout(this);
+    vLayout->setObjectName("Vertical Layout");
     vLayout->setSpacing(0);
     auto contentWidget = new QWidget(this);
+    contentWidget->setObjectName("Content Widget");
     stackLayout = new QVBoxLayout(contentWidget);
+    stackLayout->setObjectName("StackLayout");
     contentWidget->setAutoFillBackground(true);
     stackLayout->setContentsMargins(0,0,0,0);
     ac_selector = new ACSelector(this);
+    ac_selector->setObjectName("AC selector");
     vLayout->addWidget(ac_selector);
     vLayout->addWidget(contentWidget);
     vLayout->setStretch(1, 1);
@@ -44,6 +48,7 @@ void StackContainer::handleNewAC(QString ac_id) {
     QWidget* sv;
     try {
         sv = constructor(ac_id, this);
+        sv->setObjectName("container for ac: "+ac_id);
         if(!conf.isNull()) {
             Configurable* c = dynamic_cast<Configurable*>(sv);
             if(c != nullptr) {
@@ -53,10 +58,13 @@ void StackContainer::handleNewAC(QString ac_id) {
             }
         }
     }  catch (std::runtime_error &e) {
+        sv->setObjectName("ERROR");
         auto msg = QString(e.what());
         sv = new QWidget(this);
         auto lay = new QVBoxLayout(sv);
+        lay->setObjectName("Layout");
         auto label = new QLabel(msg, sv);
+        label->setObjectName("Label");
         label->setWordWrap(true);
         lay->addWidget(label);
         lay->addStretch();

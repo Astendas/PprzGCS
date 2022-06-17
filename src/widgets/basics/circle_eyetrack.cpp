@@ -18,7 +18,7 @@ void CircleEyeTrack::paintEvent(QPaintEvent *e) {
     // Draw background
     p.setPen(Qt::NoPen);
     p.setBrush(brush);
-    p.drawEllipse(radius,radius,radius,radius);
+    p.drawEllipse(0,0,radius,radius);
 }
 
 QSize CircleEyeTrack::minimumSizeHint() const

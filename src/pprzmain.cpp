@@ -54,12 +54,14 @@ void PprzMain::setupUi(int width, int height, QWidget* centralWidget) {
     addToolBar(Qt::TopToolBarArea, mainToolBar);
     statusBar = new QStatusBar(this);
     statusBar->setObjectName(QString::fromUtf8("statusBar"));
+    statusBar->layout()->setObjectName("statusBar Layout");
     setStatusBar(statusBar);
     setCentralWidget(MainContainer);
     setWindowIcon(QIcon(":/pictures/icon.svg"));
     populate_menu();
-
-    statusBar->addPermanentWidget(new QLabel("server status:"));
+    auto l=new QLabel("server status:");
+    l->setObjectName("server status Label");
+    statusBar->addPermanentWidget(l);
 
     serverStatusLed = new QLabel(statusBar);
     serverStatusLed->setObjectName("ServerStatusLed");
@@ -67,7 +69,9 @@ void PprzMain::setupUi(int width, int height, QWidget* centralWidget) {
     statusBar->addPermanentWidget(serverStatusLed);
 
     #if defined(ADAPTIVE_ENABLED)
-    statusBar->addPermanentWidget(new QLabel("LSL status:"));
+    auto l2=new QLabel("LSL status:");
+    l2->setObjectName("LSL status Label");
+    statusBar->addPermanentWidget(l2);
     LSLStatusLed = new QLabel(statusBar);
     LSLStatusLed->setObjectName("LSLStatusLed");
     setLSLStatus(false);
@@ -76,6 +80,8 @@ void PprzMain::setupUi(int width, int height, QWidget* centralWidget) {
 
     connect(DispatcherUi::get(), &DispatcherUi::new_ac_config, this, &PprzMain::newAC);
     connect(DispatcherUi::get(), &DispatcherUi::ac_deleted, this, &PprzMain::removeAC);
+
+
 }
 
 void PprzMain::setServerStatus(bool active) {
@@ -192,6 +198,9 @@ void PprzMain::populate_menu() {
     connect(show_hidden_wp_action, &QAction::toggled, [=](bool show) {
         emit DispatcherUi::get()->showHiddenWaypoints(show);
     });
+
+
+    
 
     auto help_menu = menuBar->addMenu("&Help");
     auto about = help_menu->addAction("&About");
