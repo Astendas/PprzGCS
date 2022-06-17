@@ -7,11 +7,8 @@
 #include <QSettings>
 #include "app_settings.h"
 #include "gcs_utils.h"
-<<<<<<< HEAD
 #include "circle_eyetrack.h"
-=======
 #include "python_plugins.h"
->>>>>>> f98adb97de32bc77080f4bc6976e3b6a44072af1
 
 #if defined(SPEECH_ENABLED)
 #include "speaker.h"
