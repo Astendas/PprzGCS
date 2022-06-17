@@ -6,6 +6,7 @@
 #include "units.h"
 #include "dispatcher_ui.h"
 #include "watcher.h"
+#include "python_plugins.h"
 
 #if defined(ADAPTIVE_ENABLED)
 #include "networkAdapter.h"
@@ -24,6 +25,7 @@ PprzToolbox::PprzToolbox(PprzApplication* app)
     _units                = new Units               (app, this);
     _dispatcherUi         = new DispatcherUi        (app, this);
     _watcher              = new Watcher             (app, this);
+    _plugins              = new PythonPlugins       (app, this);
 #if defined(SPEECH_ENABLED)
     _speaker              = new Speaker             (app, this);
 #endif
@@ -41,6 +43,7 @@ void PprzToolbox::setChildToolboxes(void) {
     _units->setToolbox(this);
     _dispatcherUi->setToolbox(this);
     _watcher->setToolbox(this);
+    _plugins->setToolbox(this);
 #if defined(SPEECH_ENABLED)
     _speaker->setToolbox(this);
 #endif

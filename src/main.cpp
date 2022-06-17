@@ -14,6 +14,7 @@
 #include "gcs_utils.h"
 #include "AircraftManager.h"
 #include "globalconfig.h"
+#include "python_plugins.h"
 
 #if defined(SPEECH_ENABLED)
 #include "speaker.h"
@@ -57,6 +58,7 @@ void launch_main_app() {
         setedit->show();
     } else {
         PprzMain* w = configure(layout_path);
+        pprzApp()->toolbox()->plugins()->bind_main_window(w);
         PprzDispatcher::get()->start();
         w->show();
     }

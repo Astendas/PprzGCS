@@ -22,7 +22,7 @@ class PprzMain : public QMainWindow
 public:
     explicit PprzMain(QWidget *parent = nullptr);
     static LaunchTypes launch_type;
-    static int const EXIT_CODE_REBOOT = -123456;
+    static int const EXIT_CODE_REBOOT;// = -123456;
     void setupUi(int width, int height, QWidget* centralWidget);
     #if defined(ADAPTIVE_ENABLED)
     QWidget* getAlertWidget(){return alertWidget;}
@@ -31,6 +31,12 @@ public:
 
     void setServerStatus(bool active);
     void setLSLStatus(bool active);
+
+    QToolBar* toolBar() {return mainToolBar;}
+
+    void test() {
+        qDebug() << "yipiii";
+    }
 
 
 private:

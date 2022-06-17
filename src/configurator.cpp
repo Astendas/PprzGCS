@@ -61,6 +61,10 @@ QWidget* rec_layout_build(QDomElement &ele, QSplitter* parent, int* size) {
 
         QWidget* widget = makeWidget(parent, container, name, alt);
         
+        if(ele.hasAttribute("id")) {
+            widget->setObjectName(ele.attribute("id"));
+            qDebug() << "widget named" << ele.attribute("id");
+        }
 
         for(auto layout_ele=ele.firstChildElement(); !layout_ele.isNull(); layout_ele=layout_ele.nextSiblingElement()) {
             if(layout_ele.tagName() == "configure") {

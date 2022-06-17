@@ -12,6 +12,7 @@ if(SPEECH)
         ${CMAKE_CURRENT_SOURCE_DIR}/units.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/networkAdapter.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/watcher.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/python_plugins.cpp
         )
 endif()
 

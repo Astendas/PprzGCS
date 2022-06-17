@@ -17,6 +17,7 @@ class NetworkAdapter;
 #endif
 
 class Watcher;
+class PythonPlugins;
 #if defined(SPEECH_ENABLED)
 class Speaker;
 #endif
@@ -34,6 +35,7 @@ public:
     Units*                units                () {return _units               ;}
     DispatcherUi*         dispatcherUi         () {return _dispatcherUi        ;}
     Watcher*              watcher              () {return _watcher             ;}
+    PythonPlugins*        plugins              () {return _plugins             ;}
 #if defined(SPEECH_ENABLED)
     Speaker*              speaker              () {return _speaker             ;}
 #endif
@@ -51,6 +53,7 @@ private:
     Units*                _units                = nullptr;
     DispatcherUi*         _dispatcherUi         = nullptr;
     Watcher*              _watcher              = nullptr;
+    PythonPlugins*        _plugins              = nullptr;
 #if defined(SPEECH_ENABLED)
     Speaker* _speaker                           = nullptr;
 #endif
