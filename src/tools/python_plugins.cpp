@@ -54,3 +54,15 @@ void pythonThread::run()
         qDebug() << "Error running script";
     }
 }
+
+namespace PythonUtils {
+bool __attribute__((weak))
+runScript(const QStringList &script)
+{return false;}
+
+bool __attribute__((weak))
+bindAppObject(const QString &moduleName, const QString &name, int index, QObject *o)
+{return false;}
+
+}
+
