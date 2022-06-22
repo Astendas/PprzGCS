@@ -164,12 +164,14 @@ void NetworkAdapter::setToolbox(PprzToolbox* toolbox) {
         flashAlertWidget(QColor(0,0,255,40),100);
     });
     bus->bindMessage("Order info=(.*)",[=](Peer*,QStringList args){
-        if(!setup){setup_ui();}
+        if(!setup){setup_ui();
         auto text=args[0];
         heading->setText("");
         alt->setWordWrap(true);
         alt->setText(text);
         speed->setText("");
+        }
+        
     });
     bus->bindMessage("Hide w=(.*)",[&](Peer*,QStringList args){
         QWidget* w=pprzApp()->mainWindow()->centralWidget()->findChild<QWidget*>(QString(args.at(0)));
@@ -287,9 +289,9 @@ QWidget* NetworkAdapter::search_pos(QObject* parent, QPoint* p,int prof){
     return search_pos(parent,p->x(),p->y(),prof);
 }
 void NetworkAdapter::setup_ui(){
-    auto temp=pprzApp()->mainWindow()->centralWidget()->findChild<QWidget*>("map2d")->findChild<QHBoxLayout*>("MapMainLayout");
-
-    instruction=new QFrame();
+    auto temp=pprzApp()->mainWindow()->centralWidget()->findChild<QWidget*>("mapimapi")->findChild<QHBoxLayout*>("MapMainLayout");
+    if(temp!=nullptr){
+        instruction=new QFrame();
     instruction->setObjectName("Instruction container widget");
     instruction->setStyleSheet(".QFrame{background-color: white; border: 1px solid black; border-radius: 10px;}");
     QHBoxLayout* hbox=new QHBoxLayout();
@@ -317,6 +319,8 @@ void NetworkAdapter::setup_ui(){
     instruction->hide();
 
     setup=true;
+    }
+    
 }
 
 void NetworkAdapter::setLSLStatus(){

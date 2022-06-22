@@ -59,8 +59,10 @@ namespace PythonUtils {
 
 enum AppLibTypes
 {
-    MainWindowType = 0 // SBK_MAINWINDOW_IDX
-};
+    MainWindowType = 0, // SBK_MAINWINDOW_IDX
+    PprzToolboxType= 1, // PPRZ_TOOLBOX
+    PprzApplication= 2 // PPRZ_APP
+ };
 
 enum State
 {

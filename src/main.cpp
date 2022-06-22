@@ -59,6 +59,8 @@ void launch_main_app() {
     } else {
         PprzMain* w = configure(layout_path);
         pprzApp()->toolbox()->plugins()->bind_main_window(w);
+        pprzApp()->toolbox()->plugins()->bind_toolbox(pprzApp()->toolbox());
+        pprzApp()->toolbox()->plugins()->bind_app(pprzApp());
         PprzDispatcher::get()->start();
         w->show();
     }

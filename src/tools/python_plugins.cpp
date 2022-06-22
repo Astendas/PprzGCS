@@ -17,6 +17,16 @@ void PythonPlugins::bind_main_window(PprzMain* w) {
         qDebug() << "Error loading the application module";
     }
 }
+void PythonPlugins::bind_toolbox(PprzToolbox* t){
+    if (!PythonUtils::bindAppObject("__main__", "toolbox", PythonUtils::PprzToolboxType, t)) {
+        qDebug() << "Error loading the application module";
+    }
+}
+void PythonPlugins::bind_app(PprzApplication* a){
+    if (!PythonUtils::bindAppObject("__main__", "pprzApp", PythonUtils::PprzApplication, a)) {
+        qDebug() << "Error loading the application module";
+    }
+}
 
 void PythonPlugins::printDiagnostics()
 {
@@ -26,6 +36,19 @@ void PythonPlugins::printDiagnostics()
 }
 
 void PythonPlugins::runScript(const QStringList &script)
+{
+    if (!::PythonUtils::runScript(script)) {
+        qDebug() << "Error running script";
+    }
+}
+void PythonPlugins::runThreadedScript(const QStringList &scripts)
+{
+    pythonThread* t1=new pythonThread();
+    t1->setParent(this);
+    t1->setScript(scripts);
+    t1->start();
+}
+void pythonThread::run()
 {
     if (!::PythonUtils::runScript(script)) {
         qDebug() << "Error running script";

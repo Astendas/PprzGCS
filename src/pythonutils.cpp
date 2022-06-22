@@ -185,7 +185,6 @@ bool runScript(const QStringList &script)
             PyErr_Print();
         result = false;
     }
-
     return result;
 }
 

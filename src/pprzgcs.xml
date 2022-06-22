@@ -2,6 +2,19 @@
 <typesystem package="AppLib">
     <load-typesystem name="typesystem_widgets.xml" generate="no"/>
     <object-type name="PprzMain"/>
+    <object-type name="PprzToolbox"/>
+    <object-type name="PprzTool"/>
+    <object-type name="PythonPlugins"/>
+    <namespace-type name="PythonUtils"/>
+    <object-type name="PprzApplication"/>
+    <object-type name="IvyQt">
+        <modify-function signature="IvyQt(QString, QString, QObject*)">
+            <modify-argument index="this">
+                <define-ownership owner="c++"/>
+            </modify-argument>
+        </modify-function>
+    </object-type>
+    <object-type name="Peer"/>
     <!--object-type name="MapWidget"/>
     <object-type name="PprzMap"/-->
 </typesystem>

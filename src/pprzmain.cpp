@@ -115,6 +115,24 @@ void PprzMain::populate_menu() {
     connect(test, &QAction::triggered, [=](){
         readWidget(this,0);
     });
+    auto run_plugin = file_menu->addAction("run a plugin");
+    connect(run_plugin,&QAction::triggered,[=](){
+        auto settings = getAppSettings();
+        QString path = QDir::toNativeSeparators(appConfig()->value("USER_DATA_PATH").toString());
+        auto files = QFileDialog::getOpenFileNames(this, "open plugins", path+"/python/plugins", "*.py");
+        QFile script(files.at(0));
+        if(!script.open(QIODevice::ReadOnly)) {
+            throw std::runtime_error("Error while loading flightplan file");
+        }
+        cout<<files.at(0).toStdString()<<endl;
+        QStringList* file=new QStringList();
+        char buf[1024];
+        cout<<script.canReadLine()<<endl;
+        while(script.readLine(buf,sizeof(buf))>0){file->append(QString(buf));}
+        script.close();
+        pprzApp()->toolbox()->plugins()->runScript(*file);
+    });
+
 
     auto user_dir = file_menu->addAction("Open user directory");
     user_dir->setObjectName("UserDir");

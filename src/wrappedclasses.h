@@ -52,6 +52,12 @@
 #define WRAPPEDCLASSES_H
 
 #include "pprzmain.h"
+#include "PprzToolbox.h"
+#include "tools/python_plugins.h"
+#include "pythonutils.h"
+#include "PprzApplication.h"
+#include "../ext/IvyQt/include/IvyQt/ivyqt.h"
+#include "../ext/IvyQt/include/IvyQt/peer.h"
 //#include "common/waypoint.h"
 //#include "geometry/point2dlatlon.h"
 //#include "widgets/map/map_items/map_item.h"
