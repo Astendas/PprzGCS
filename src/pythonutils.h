@@ -55,6 +55,7 @@ class QObject;
 class QString;
 class QStringList;
 
+
 namespace PythonUtils {
 
 enum AppLibTypes
@@ -71,12 +72,14 @@ enum State
     AppModuleLoaded
 };
 
+
 State init();
 
 bool bindAppObject(const QString &moduleName, const QString &name,
                    int index, QObject *o);
 
 bool runScript(const QStringList &script);
+void Finalize();
 
 } // namespace PythonUtils
 

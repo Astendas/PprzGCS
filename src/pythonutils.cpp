@@ -62,6 +62,8 @@
 #include <sbkconverter.h>
 #include <sbkmodule.h>
 
+#include <iostream>
+
 /* from AppLib bindings */
 
 #if PY_MAJOR_VERSION >= 3
@@ -80,8 +82,7 @@ namespace PythonUtils {
 
 static State state = PythonUninitialized;
 
-static void cleanup()
-{
+static void cleanup(){
     if (state > PythonUninitialized) {
         Py_Finalize();
         state = PythonUninitialized;
@@ -186,7 +187,11 @@ bool runScript(const QStringList &script)
             PyErr_Print();
         result = false;
     }
+    std::cout<<"Plugin was Executed succesfully"<<std::endl;
     return result;
+}
+void Finalize(){
+    cleanup();
 }
 
 } // namespace PythonUtils

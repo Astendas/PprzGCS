@@ -1,44 +1,53 @@
+print("Initializing plugin: ADAPTER.PY")
 from time import sleep
 from math import sqrt
 import time
 import typing
 import PySide2
-import os
+import os,sys
+try:
+    import GCS
+except:
+    pass
+# add python plugin dir to sys path so we can import other plugin here and files
+sys.path.append(os.getcwd()+"/python/plugins")
+
+
 from PySide2.QtWidgets import *
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from ivy.ivy import IvyServer
+import pygame.mixer as mixer
 import threading as t
-from multiprocessing import Process
+from eyeTrack import eyeTrack
+from search import *
 
+
+# the sound system initialized here can be reused in threaded script!
+print("Initializing Sound System")
+mixer.init()
+sound=mixer.music.load("python/plugins/select.mp3")
 WIDGET_FLASH_TIME=2
 CLOCKS_PER_SEC=1000000000
 MAX_FIXATION_TIME=5
-class eyeTrack(QWidget):
-    def __init__(self, parent: typing.Optional[PySide2.QtWidgets.QWidget] = mainWindow,radius=5) -> None:
-        super().__init__(parent)
-        self.setObjectName("Eye Track Circle")
-        self.radius=radius
-        self.brush=QBrush(Qt.red)
-    def paintEvent(self, event: PySide2.QtGui.QPaintEvent) -> None:
-        p=QPainter(self)
 
-        #Draw background
-        p.setPen(Qt.red)
-        p.setBrush(self.brush)
-        p.drawEllipse(0,0,self.radius,self.radius)
-        return super().paintEvent(event)
-    def setRadius(self,radius):
-        self.radius=radius
-
-print("hello")
+print("Creating QObject for the UI")
+mainWindow=mainWindow
+toolbox=toolbox
+pprzApp=pprzApp
 flash=QWidget()
 eye_track=eyeTrack(mainWindow)
+heading=QLabel("None")
+alt=QLabel("None")
+speed=QLabel("None")
+instruction=QFrame()
 
+
+print("assigning global variable")
 time_fixation=-1
 last_point=QPoint(0,0)
 looked_at_widget=[]
-last_state="LOW"
+last_state="HIGH"
 radius=5
 
 
@@ -60,7 +69,7 @@ def flashEyeTrack(point,radius):
     eye_track.raise_()
     eye_track.updateGeometry()
     eye_track.show()
-    # t.Timer(10,eye_track.hide).start()
+    t.Timer(100,eye_track.hide).start()
 
 def flashWidget(widget):
     try:
@@ -69,17 +78,40 @@ def flashWidget(widget):
     except:
         pass
 
+def order_3(sender,h,a,s):
+    instruction.show()
+    heading.setText(h+"°")
+    alt.setWordWrap(False)
+    alt.setText(a+" m")
+    speed.setText(s+" m/s")
+    flashAlert(QColor(0,0,255,100),50)
+    mixer.music.play()
+    sleep(3)
+    mixer.music.stop()
+def order_1(sender,msg):
+    instruction.show()
+    heading.setText("")
+    alt.setWordWrap(True)
+    alt.setText(msg)
+    speed.setText("")
+    flashAlert(QColor(0,0,255,100),50)
+
+
+
+
 def eye_track_update(sender,x,y):
     p=QPoint(float(x),float(y))
     #check if we are in a fixation, temporary algo!!!! REALLY NEED TO CHANGE!!!!
-    if not "last_point" in locals():
-        last_point=QPoint(0,0)
-    if not "time_fixation" in locals():
-        time_fixation=-1
-    if(sqrt(((p.x()-last_point.x())^2) + ((p.y()-last_point.y())^2))<=60.):
+    time_fixation=globals()["time_fixation"]
+    last_point=globals()["last_point"]
+    last_state=globals()["last_state"]
+    looked_at_widget=globals()["looked_at_widget"]
+
+    print(time_fixation)
+    if(sqrt(((p.x()-last_point.x())**2) + ((p.y()-last_point.y())**2))<=60.):
         if(time_fixation==-1):
             time_fixation=time.time_ns()
-        radius=10.+((time.time_ns()-time_fixation)/CLOCKS_PER_SEC)*100.
+        radius=10.+((time.time_ns()-time_fixation)/CLOCKS_PER_SEC)*10.
     else:
         radius=5
         time_fixation=-1
@@ -87,10 +119,11 @@ def eye_track_update(sender,x,y):
     
 
 
-    # QWidget* w=search_pos(pprzApp()->mainWindow(),p);
+    # QWidget* w=search_pos(pprzApp()->mainWindow(),p)
     p2=mainWindow.mapFromGlobal(p)
     t=pprzApp.widgetAt(p)
     e=t
+    # c=search_for_widgets(mainWindow,p)
     i=0
 
     while(e!=None):
@@ -102,11 +135,22 @@ def eye_track_update(sender,x,y):
         i+=1
         print(obj_str+"Widget: "+e.objectName())
         e=(e.parent())
+    # i=0
+    # for wid in c:
+    #     j=wid
+    #     while(j!=None):
+    #         obj_str=""
+    #         a=i
+    #         while(a>0):
+    #             a-=1
+    #             obj_str+="  "
+    #         i+=1
+    #         print(obj_str+"Widget: "+j.objectName())
+    #         j=(j.parent())
 
     if(t!=None and t!=mainWindow.centralWidget()):
         if(time.time_ns()-time_fixation>((WIDGET_FLASH_TIME)*CLOCKS_PER_SEC) and time_fixation!=-1):
             looked_at_widget.append(t)
-        #cout<<"widget = "+w->objectName().toStdString()<<endl;
         flashEyeTrack(p2,radius)
         
     
@@ -116,11 +160,14 @@ def eye_track_update(sender,x,y):
             flashWidget(mainWindow)
         while(len(looked_at_widget)!=0):
             flashWidget(looked_at_widget.pop())
+    globals()["last_point"]=last_point
+    globals()["time_fixation"]=time_fixation
+    globals()["looked_at_widget"]=looked_at_widget
 def debug_ivy(sender,msg):
     print("DEBUG IVY:",msg)
 
 def mentalFatigue(sender,status,index):
-    last_state=status
+    globals()["last_state"]=status
     if(status=="HIGH"):
         flashAlert(QColor(0,0,255,20),50)
 def setup_ui(parent):
@@ -146,6 +193,32 @@ def setup_ui(parent):
     eye_track.setAttribute(Qt.WA_TransparentForMouseEvents)
     eye_track.raise_()
     eye_track.hide()
+    temp=mainWindow.findChild(QHBoxLayout,"MapMainLayout")
+    if(temp!=None):
+        instruction.setObjectName("Instruction container widget")
+        instruction.setStyleSheet(".QFrame{background-color: white; border: 1px solid black; border-radius: 10px;}")
+        hbox=QHBoxLayout()
+        hbox.setObjectName("Instruction Layout")
+        instruction.setLayout(hbox)
+        
+        temp.insertWidget(2,instruction,1,Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignHCenter)
+        temp.insertStretch(2,1)
+
+        
+        heading.setObjectName("heading Label")
+        alt.setObjectName("alt Label")
+        speed.setObjectName("speed Label")
+
+        hbox.addWidget(heading)
+        hbox.addSpacing(1)
+        hbox.addWidget(alt)
+        hbox.addSpacing(1)
+        hbox.addWidget(speed)
+
+        instruction.setAutoFillBackground(True)
+        instruction.raise_()
+        instruction.hide()
+
 
 
 
@@ -154,6 +227,24 @@ print("setting up ui")
 ivyBus=bus("InterfaceAdapter")
 ivyBus.bind_msg(mentalFatigue,"^MentalFatigue Status=(.*) Index=(.*)")
 ivyBus.bind_msg(eye_track_update,"EyeGazePosition X=(.*) Y=(.*)")
+ivyBus.bind_msg(order_3,"Order heading=(.*) alt=(.*) speed=(.*)")
+ivyBus.bind_msg(order_1,"Order info=(.*)")
 ivyBus.bind_msg(debug_ivy,"(.*)")
-toolbox.plugins().runThreadedScript(["ivyBus.start('127.255.255.255:2011')","while(True):pass"])
+running=True
+def kill():
+        globals()["running"]=False    
+mainWindow.killPlugins.connect(kill)
+toolbox.plugins().runThreadedScript(["ivyBus.start('127.255.255.255:2011')",
+                                    "while(globals()['running']):sleep(1)",
+                                    "flash.hide()",
+                                    "eye_track.hide()",
+                                    "instruction.hide()",
+                                    "flash.destroy()",
+                                    "eye_track.destroy()",
+                                    "instruction.destroy()",
+                                    "ivyBus.stop()",
+                                    "print('Goodbye!')"
+                                    ])
+# ivyBus.start('127.255.255.255:2011')
+print("Ivy launched")
 

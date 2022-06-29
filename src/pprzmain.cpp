@@ -120,7 +120,8 @@ void PprzMain::populate_menu() {
         auto settings = getAppSettings();
         QString path = QDir::toNativeSeparators(appConfig()->value("USER_DATA_PATH").toString());
         auto files = QFileDialog::getOpenFileNames(this, "open plugins", path+"/python/plugins", "*.py");
-        QFile script(files.at(0));
+        if(!files.isEmpty()){
+            QFile script(files.at(0));
         if(!script.open(QIODevice::ReadOnly)) {
             throw std::runtime_error("Error while loading flightplan file");
         }
@@ -131,6 +132,16 @@ void PprzMain::populate_menu() {
         while(script.readLine(buf,sizeof(buf))>0){file->append(QString(buf));}
         script.close();
         pprzApp()->toolbox()->plugins()->runScript(*file);
+        }
+    });
+    auto kill_plugin= file_menu->addAction("kill all plugins running");
+    connect(kill_plugin,&QAction::triggered,[=](){
+        emit killPlugins();
+    });
+    connect(pprzApp()->toolbox()->plugins(),&PythonPlugins::killed,[=](){
+        pprzApp()->toolbox()->plugins()->bind_main_window(this);
+        pprzApp()->toolbox()->plugins()->bind_toolbox(pprzApp()->toolbox());
+        pprzApp()->toolbox()->plugins()->bind_app(pprzApp());
     });
 
 
@@ -288,7 +299,7 @@ void PprzMain::removeAC(QString ac_id) {
 
     menu->deleteLater();
     action->deleteLater();
-
+    
 }
 #if defined(ADAPTIVE_ENABLED)
 //@brief add a red overlay on the widget which can be activated by the network tool

@@ -43,12 +43,15 @@ SettingsViewer::SettingsViewer(QString ac_id, QWidget *parent) : QWidget(parent)
     scroll_content = new QStackedWidget();
     scroll_content->setObjectName("Scroll Content");
 
-    main_layout->addWidget(scroll);
+    scroll_content->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     scroll->setWidget(scroll_content);
     scroll->setWidgetResizable(true);
-
+    scroll->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    
+    main_layout->addWidget(scroll);
+
 
     search_bar = new QLineEdit(this);
     search_bar->setObjectName("SearchBar");
@@ -87,16 +90,24 @@ SettingsViewer::SettingsViewer(QString ac_id, QWidget *parent) : QWidget(parent)
     connect(DispatcherUi::get(), &DispatcherUi::settingUpdated, this, &SettingsViewer::updateSettings);
 
     init(ac_id);
+
+    scroll_content->installEventFilter(this);
 }
 
 bool SettingsViewer::eventFilter(QObject *object, QEvent *event)
 {
+    if(object==scroll_content && event->type()==QEvent::Resize){
+    setMinimumWidth(scroll_content->minimumSizeHint().width() + scroll->verticalScrollBar()->width());
+    return false;
+    }
     (void)object;
     (void)event;
     if(search_bar->hasFocus() && event->type() == QEvent::KeyPress) {
         return true;    //interrupt event
     }
+    
     return false;
+
 }
 
 void SettingsViewer::init(QString ac_id) {
@@ -171,7 +182,6 @@ void SettingsViewer::create_widgets(SettingMenu* setting_menu, QList<SettingMenu
             connect(
                 button, &QPushButton::clicked, this,
                 [=]() {
-
                     scroll_content->setCurrentIndex(widgets_indexes[setm]);
                     path->setCurrentIndex(path_indexes[setm]);
                     restore_searched_items();
@@ -209,6 +219,7 @@ void SettingsViewer::create_widgets(SettingMenu* setting_menu, QList<SettingMenu
     }
     for(auto &set: setting_menu->getSettings()) {
         auto setting_widget = makeSettingWidget(set, widget);
+        
         menu_layout->addWidget(setting_widget);
         setting_widgets[set] = setting_widget;
     }
@@ -260,6 +271,7 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
     QVBoxLayout* vLay = new QVBoxLayout(widget);
     QHBoxLayout* hlay = new QHBoxLayout();
     vLay->addItem(hlay);
+    
 
     widget->setObjectName(setting->getName());
     vLay->setObjectName("Vertical Layout");
@@ -294,6 +306,7 @@ QWidget* SettingsViewer::makeSettingWidget(Setting* setting, QWidget* parent) {
     reset_btn->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     reset_btn->setToolTip("reset to initial");
     hlay->addWidget(reset_btn);
+    widget->setMinimumWidth(1);
 
     connect(value_btn, &QPushButton::clicked, this, [=]() {
         qDebug() << "setting " << setting->getNo() << " of AC " << ac_id << " clicked !";

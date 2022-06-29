@@ -25,6 +25,7 @@ private:
 
     QVBoxLayout* vLayout;
     ACSelector* ac_selector;
+    QWidget* contentWidget;
     QVBoxLayout* stackLayout;
 
     QDomElement conf;

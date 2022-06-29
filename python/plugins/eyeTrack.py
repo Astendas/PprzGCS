@@ -6,8 +6,8 @@ import PySide2
 import typing
 
 class eyeTrack(QWidget):
-    def __init__(self, parent: typing.Optional[PySide2.QtWidgets.QWidget] = ..., f: PySide2.QtCore.Qt.WindowFlags = ...,radius=5) -> None:
-        super().__init__(parent, f)
+    def __init__(self, parent: typing.Optional[PySide2.QtWidgets.QWidget],radius=5) -> None:
+        super().__init__(parent)
         self.setObjectName("Eye Track Circle")
         self.radius=radius
         self.brush=QBrush(Qt.red)

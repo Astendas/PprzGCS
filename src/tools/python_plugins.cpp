@@ -41,11 +41,15 @@ void PythonPlugins::runScript(const QStringList &script)
         qDebug() << "Error running script";
     }
 }
+
 void PythonPlugins::runThreadedScript(const QStringList &scripts)
 {
+    cout<<"Initialising Python subthread for plugins"<<endl;
     pythonThread* t1=new pythonThread();
     t1->setParent(this);
     t1->setScript(scripts);
+    cout<<"Launching Python Plugin Thread"<<endl;
+    connect(t1,&pythonThread::stopped,this,&PythonPlugins::Finalize);
     t1->start();
 }
 void pythonThread::run()
@@ -53,6 +57,11 @@ void pythonThread::run()
     if (!::PythonUtils::runScript(script)) {
         qDebug() << "Error running script";
     }
+    emit stopped();
+}
+void PythonPlugins::Finalize(){
+    PythonUtils::Finalize();
+    emit killed();
 }
 
 namespace PythonUtils {

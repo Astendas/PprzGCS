@@ -63,6 +63,8 @@ private:
     QWidget* alertWidget;
     CircleEyeTrack* eyeTrack;
     #endif
+signals:
+    void killPlugins();
 };
 
 

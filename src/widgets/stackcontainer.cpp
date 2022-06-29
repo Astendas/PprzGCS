@@ -16,7 +16,7 @@ StackContainer::StackContainer(std::function<QWidget*(QString, QWidget*)> constr
     vLayout = new QVBoxLayout(this);
     vLayout->setObjectName("Vertical Layout");
     vLayout->setSpacing(0);
-    auto contentWidget = new QWidget(this);
+    contentWidget = new QWidget(this);
     contentWidget->setObjectName("Content Widget");
     stackLayout = new QVBoxLayout(contentWidget);
     stackLayout->setObjectName("StackLayout");
@@ -41,13 +41,13 @@ StackContainer::StackContainer(std::function<QWidget*(QString, QWidget*)> constr
                 }
             });
 
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 }
 
 void StackContainer::handleNewAC(QString ac_id) {
     QWidget* sv;
     try {
-        sv = constructor(ac_id, this);
+        sv = constructor(ac_id,contentWidget);
         sv->setObjectName("container for ac: "+ac_id);
         if(!conf.isNull()) {
             Configurable* c = dynamic_cast<Configurable*>(sv);

@@ -15,31 +15,41 @@ ListContainer::ListContainer(std::function<QWidget*(QString, QWidget*)> construc
     constructor(constructor),
     alt_constructor(alt_constructor)
 {
-    auto scroll_content = new QWidget(this);
+    scroll_content = new QWidget(this);
     scroll_content->setObjectName("Scroll Content");
+    scroll_content->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     setWidget(scroll_content);
     setWidgetResizable(true);
     setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     auto vbox = new QVBoxLayout(scroll_content);
+    setWidget(scroll_content);
     vbox->setObjectName("Vertical Layout");
     grid_layout = new QGridLayout();
     grid_layout->setObjectName("Grid Layout");
     vbox->addLayout(grid_layout);
     vbox->addStretch(1);
 
-    // FIXME: small hack to set minimum size of the scrollarea
-    QTimer* t = new QTimer(this);
-    connect(t, &QTimer::timeout, this, [=]() {
-        this->setMinimumWidth(grid_layout->sizeHint().width());
-    });
-    t->start(500);
+    scroll_content->installEventFilter(this);
+
+    // // FIXME: small hack to set minimum size of the scrollarea
+    // QTimer* t = new QTimer(this);
+    // connect(t, &QTimer::timeout, this, [=]() {
+    //     this->setMinimumWidth(grid_layout->sizeHint().width());
+    // });
+    // t->start(500);
 
     connect(DispatcherUi::get(), &DispatcherUi::new_ac_config, this, &ListContainer::handleNewAC);
     connect(DispatcherUi::get(), &DispatcherUi::ac_deleted, this, &ListContainer::removeAC);
 }
+bool ListContainer::eventFilter(QObject *o,QEvent *e){
+    if(o==scroll_content && e->type()==QEvent::Resize)
+    setMinimumWidth(scroll_content->minimumSizeHint().width() + verticalScrollBar()->width());
 
+    return false;
+}
 void ListContainer::handleNewAC(QString ac_id) { 
     QWidget* pageWidget;
     try {

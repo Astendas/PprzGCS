@@ -17,8 +17,11 @@ public:
 signals:
 
 private:
+    QWidget* scroll_content;
+
     void handleNewAC(QString ac_id);
     void removeAC(QString ac_id);
+    bool eventFilter(QObject *o,QEvent *e);
 
     std::function<QWidget*(QString, QWidget*)> constructor;
     std::function<QWidget*(QString, QWidget*)> alt_constructor;

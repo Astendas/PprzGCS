@@ -17,12 +17,14 @@ public:
     void bind_toolbox(PprzToolbox* t);
     void bind_app(PprzApplication* a);
 
-signals:
 
+signals:
+    void killed();
 public Q_SLOTS:
     void printDiagnostics();
     void runScript(const QStringList &);
     void runThreadedScript(const QStringList &);
+    void Finalize();
 };
 class pythonThread: public QThread
 {
@@ -32,4 +34,6 @@ public:
     void setScript(const QStringList &scripts){script=scripts;};
 private:
     QStringList script;
+signals:
+    void stopped();
 };

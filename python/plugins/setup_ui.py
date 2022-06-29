@@ -11,7 +11,6 @@ from ivy.ivy import IvyServer
 import threading as t
 from multiprocessing import Process
 
-flash=QWidget()
 
 
 
@@ -33,12 +32,34 @@ def setup_ui(parent):
     screenGeometry = screen.geometry()
     h = screenGeometry.height()
     w = screenGeometry.width()
-    flash.setGeometry(0,0,h,w)
-    #flash.hide()
-    # eye_track.setAttribute(Qt.WA_TransparentForMouseEvents)
-    # eye_track.raise_()
-    # eye_track.hide()
+    flash.setGeometry(0,0,2*h,2*w)
+    flash.hide()
+    eye_track.setAttribute(Qt.WA_TransparentForMouseEvents)
+    eye_track.raise_()
+    eye_track.hide()
+    temp=mainWindow.findChild(QHBoxLayout,"MapMainLayout")
+    print(temp)
+    if(temp!=None):
+        instruction.setObjectName("Instruction container widget")
+        instruction.setStyleSheet(".QFrame{background-color: white; border: 1px solid black; border-radius: 10px;}")
+        hbox=QHBoxLayout()
+        hbox.setObjectName("Instruction Layout")
+        instruction.setLayout(hbox)
+        
+        temp.insertWidget(2,instruction,1,Qt.AlignmentFlag.AlignTop|Qt.AlignmentFlag.AlignHCenter)
+        temp.insertStretch(2,1)
 
+        
+        heading.setObjectName("heading Label")
+        alt.setObjectName("alt Label")
+        speed.setObjectName("speed Label")
 
+        hbox.addWidget(heading)
+        hbox.addSpacing(1)
+        hbox.addWidget(alt)
+        hbox.addSpacing(1)
+        hbox.addWidget(speed)
 
-setup_ui(mainWindow)
+        instruction.setAutoFillBackground(True)
+        instruction.raise_()
+        instruction.hide()

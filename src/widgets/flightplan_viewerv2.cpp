@@ -26,7 +26,9 @@ QWidget* FlightPlanViewerV2::make_blocks_tab() {
     auto scroll = new QScrollArea(this);
     scroll->setObjectName("FlightPlan Scroll");
     scroll->setWidgetResizable(true);
-    scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    scroll->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
+    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     auto widget = new QWidget();
     widget->setObjectName("Blocks Tab");
 
@@ -42,6 +44,7 @@ QWidget* FlightPlanViewerV2::make_blocks_tab() {
     vbox->addStretch();
     hbox->addItem(vbox);
     hbox->addStretch();
+    hbox->setSizeConstraint(QLayout::SizeConstraint::SetNoConstraint);
 
     for(auto block: AircraftManager::get()->getAircraft(ac_id)->getFlightPlan()->getBlocks()) {
         QString icon = block->getIcon();
@@ -88,6 +91,7 @@ QWidget* FlightPlanViewerV2::make_blocks_tab() {
         labels_stylesheet = block_labels[0]->styleSheet();
     }
 
+    widget->setLayout(hbox);
     scroll->setWidget(widget);
 
     return scroll;

@@ -3,11 +3,14 @@
 <!--load-typesystem name="typesystem_xml.xml" generate="no"/-->
 <load-typesystem name="typesystem_widgets.xml" generate="no"/>
     <primitive-type name="std::optional"/>
-    <object-type name="PprzMain"/>
+    <primitive-type name="std::function"/>
+    <enum-type name="PeerStatus"/>
+    <object-type name="PprzMain">
+        <!-- <enum-type name="LaunchTypes"/> -->
+    </object-type>
     <object-type name="PprzToolbox"/>
     <object-type name="PprzTool"/>
     <object-type name="PythonPlugins"/>
-    <namespace-type name="PythonUtils"/>
     <object-type name="PprzApplication"/>
     <object-type name="IvyQt">
         <modify-function signature="IvyQt(QString, QString, QObject*)">
@@ -16,6 +19,13 @@
             </modify-argument>
         </modify-function>
     </object-type>
+    
+    <namespace-type name="PythonUtils">
+        <enum-type name="AppLibTypes"/>
+        <enum-type name="State"/>
+    </namespace-type>
+    <!-- <value-type name="Binding"/> -->
+    <!-- <value-type name="Callback"/> -->
     <object-type name="Peer"/>
     <!--object-type name="MapWidget"/-->
     <value-type name="Point2DLatLon">
