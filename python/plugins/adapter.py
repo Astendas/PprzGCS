@@ -1,4 +1,5 @@
 print("Initializing plugin: ADAPTER.PY")
+from calendar import c
 from time import sleep
 from math import sqrt
 import time
@@ -20,6 +21,7 @@ from ivy.ivy import IvyServer
 import pygame.mixer as mixer
 import threading as t
 from eyeTrack import eyeTrack
+from ChatWidget import ChatWidget
 from search import *
 
 
@@ -41,7 +43,8 @@ heading=QLabel("None")
 alt=QLabel("None")
 speed=QLabel("None")
 instruction=QFrame()
-
+chat=ChatWidget(mainWindow.centralWidget())
+chat.setThread(pprzApp.thread())
 
 print("assigning global variable")
 time_fixation=-1
@@ -95,7 +98,8 @@ def order_1(sender,msg):
     alt.setText(msg)
     speed.setText("")
     flashAlert(QColor(0,0,255,100),50)
-
+def flashColor(red,green,blue,alpha,time):
+    flashAlert(QColor(red,green,blue,alpha),time)
 
 
 
@@ -108,7 +112,7 @@ def eye_track_update(sender,x,y):
     looked_at_widget=globals()["looked_at_widget"]
 
     print(time_fixation)
-    if(sqrt(((p.x()-last_point.x())**2) + ((p.y()-last_point.y())**2))<=60.):
+    if(sqrt(((p.x()-last_point.x())**2) + ((p.y()-last_point.y())**2))<=100.):
         if(time_fixation==-1):
             time_fixation=time.time_ns()
         radius=10.+((time.time_ns()-time_fixation)/CLOCKS_PER_SEC)*10.
@@ -169,7 +173,23 @@ def debug_ivy(sender,msg):
 def mentalFatigue(sender,status,index):
     globals()["last_state"]=status
     if(status=="HIGH"):
-        flashAlert(QColor(0,0,255,20),50)
+        flashAlert(QColor(255,0,0,20),50)
+def sendChatMessage(sender,sender_name,msg):
+    chat.send.emit(sender_name,msg)
+
+def periodic_verification():
+    # if((time.time_ns()-globals()["time_fixation"])>((MAX_FIXATION_TIME*CLOCKS_PER_SEC)) and globals()["time_fixation"]!=-1 and globals()["last_state"]=="HIGH"):
+    #     eye_track_update(None,0,0)
+    # if(globals()["time_fixation"]==-1):
+    #     eye_track_update(None,0,0)
+    pass
+
+
+
+
+
+
+#setting up the UI for new graphical component to add.
 def setup_ui(parent):
     #object management
 
@@ -196,7 +216,7 @@ def setup_ui(parent):
     temp=mainWindow.findChild(QHBoxLayout,"MapMainLayout")
     if(temp!=None):
         instruction.setObjectName("Instruction container widget")
-        instruction.setStyleSheet(".QFrame{background-color: white; border: 1px solid black; border-radius: 10px;}")
+        instruction.setStyleSheet(".QFrame{background-color: white; border: 1px solid black; border-radius: 3px;}")
         hbox=QHBoxLayout()
         hbox.setObjectName("Instruction Layout")
         instruction.setLayout(hbox)
@@ -218,8 +238,10 @@ def setup_ui(parent):
         instruction.setAutoFillBackground(True)
         instruction.raise_()
         instruction.hide()
-
-
+        splitter=mainWindow.findChild(QSplitter,"Vertical Splitter")
+        splitter.addWidget(chat)
+        # chat.setStyleSheet(".QFrame{background-color: white; border: 1px solid black; border-radius: 10px;}")
+        
 
 
 setup_ui(mainWindow)
@@ -229,11 +251,27 @@ ivyBus.bind_msg(mentalFatigue,"^MentalFatigue Status=(.*) Index=(.*)")
 ivyBus.bind_msg(eye_track_update,"EyeGazePosition X=(.*) Y=(.*)")
 ivyBus.bind_msg(order_3,"Order heading=(.*) alt=(.*) speed=(.*)")
 ivyBus.bind_msg(order_1,"Order info=(.*)")
+ivyBus.bind_msg(flashColor,"Flash Color=(.*),(.*),(.*),(.*) Time=(.*)")
+ivyBus.bind_msg(sendChatMessage,"Chat sender=(.*) msg=(.*)")
 ivyBus.bind_msg(debug_ivy,"(.*)")
 running=True
 def kill():
-        globals()["running"]=False    
+        globals()["running"]=False  
+class RepeatTimer(t.Timer):
+    def run(self):
+        while not self.finished.wait(self.interval):
+            self.function(*self.args, **self.kwargs)
+Main_Timer=RepeatTimer(0.5,periodic_verification)
+Main_Timer.setDaemon(True)
+Main_Timer.start()
 mainWindow.killPlugins.connect(kill)
+chat.send_message("Opérateur","salut moi c'est jérôme")
+chat.send_message("Opérateur","je vais te donner des instructions pour cette opération, commence par alumer le moteur")
+chat.send_message("Moi","Ok let's go c'est parti aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+chat.send_message("Crypto_bro999",'eh, regarde ici j\'ai des roblux gratuit <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">https://www.freeroblux.com</a>')
+chat.send_message("Mami",'<img class="fit-picture" src="index.jpeg" alt="Grapefruit slice atop a pile of other slices">')
+chat.send_message("Mami",'<img src="https://i.redd.it/8d6ehlkvcdl61.png" alt="Ce koala a été photographié dans le Queensland, un état australien. Ces marsupiaux emblématiques vivent sur ..." title="Ce koala a été photographié dans le Queensland, un état australien. Ces marsupiaux emblématiques vivent sur ..." loading="lazy" width="426" height="472">')
+chat.send_message("salut",'<iframe width="782" height="440" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Rick Astley - Never Gonna Give You Up (Official Music Video)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
 toolbox.plugins().runThreadedScript(["ivyBus.start('127.255.255.255:2011')",
                                     "while(globals()['running']):sleep(1)",
                                     "flash.hide()",
@@ -246,5 +284,5 @@ toolbox.plugins().runThreadedScript(["ivyBus.start('127.255.255.255:2011')",
                                     "print('Goodbye!')"
                                     ])
 # ivyBus.start('127.255.255.255:2011')
-print("Ivy launched")
+
 

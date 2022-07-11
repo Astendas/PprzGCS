@@ -20,6 +20,7 @@ public:
 
 signals:
     void killed();
+    void startPlugins(const QStringList &);
 public Q_SLOTS:
     void printDiagnostics();
     void runScript(const QStringList &);
