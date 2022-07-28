@@ -21,7 +21,7 @@ def readWidget(main:QWidget,prof:int =0,max_prof=99999):
             for obj in list1:
                 if(main.objectName()!=""):
                     readWidget(obj,prof+1,max_prof)
-readWidget(mainWindow,max_prof=5)
+readWidget(mainWindow,max_prof=10)
 # a=mainWindow.findChild(QWidget,"mapimapi")
 # b=a.findChild(QWidget,"ButtonsRightLayout")
 # b.itemAt(0).hide()

@@ -11,6 +11,9 @@ class eyeTrack(QWidget):
         self.setObjectName("Eye Track Circle")
         self.radius=radius
         self.brush=QBrush(Qt.red)
+        self.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.raise_()
+        self.hide()
     def paintEvent(self, event: PySide2.QtGui.QPaintEvent) -> None:
         p=QPainter(self)
 
@@ -18,6 +21,10 @@ class eyeTrack(QWidget):
         p.setPen(Qt.red)
         p.setBrush(self.brush)
         p.drawEllipse(0,0,self.radius,self.radius)
-        return super().paintEvent(event)
+        try:
+            return super().paintEvent(event)
+        except Exception as e:
+            pass
+        p.end()
     def setRadius(self,radius):
         self.radius=radius

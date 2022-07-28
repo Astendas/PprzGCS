@@ -1,9 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+from time import time
 from random import randint
 from PySide2.QtWidgets import QWidget,QScrollArea,QLabel,QVBoxLayout,QHBoxLayout,QFrame,QAbstractScrollArea,QSizePolicy,QLineEdit
 from PySide2.QtGui import QPalette,QColor
 from PySide2.QtCore import Qt,QEvent,QObject,Signal
-
+import sys,os
 
 class ChatWidget(QFrame):
     send=Signal(str,str)
@@ -14,12 +15,17 @@ class ChatWidget(QFrame):
         self.senders={}
         self.nb_message=0
         self.pprzAppThread=None
+        self.messagesFrames=[]
         self.setup_ui()
+        self.ivy=None
 
         
         
 
         self.send.connect(self.send_message)
+
+
+        
     def setup_ui(self):
         self.scroll_area=QScrollArea(self)
         self.content=QWidget(self.scroll_area)
@@ -53,20 +59,22 @@ class ChatWidget(QFrame):
         self.scroll_area.installEventFilter(self)
     def self_send(self):
         self.send_message("Moi",self.chatInput.text())
-        # globals()["ivyBus"].send_msg("Message Sender=Moi msg="+self.chatInput.text())
+        self.ivy.send_msg("Message Sender=Moi msg="+self.chatInput.text())
         self.chatInput.setText("")
     def send_message(self,sender:str,msg:str)->None:
         """
         sender: name of the message sender (will be colorized)
         msg: the message in itself
+
+        add a new QFrame in the scroll zone containing the message
         """
         messageFrame=QFrame()
         messageFrame.setObjectName("Message Frame")
-        messageFrame.setStyleSheet(".QFrame{background-color: rgba(20,20,200,50); border-radius: 2px;}")
+        messageFrame.setStyleSheet(".QFrame{background-color: rgba(200,200,200,50); border-radius: 20px;}")
         message_layout=QVBoxLayout(messageFrame)
         message_layoutH=QHBoxLayout()
         date=datetime.now()
-        senderLabel=QLabel("<u>"+sender+"</u>"+date.strftime("%A %d-%m %H:%M")+" :",messageFrame)
+        senderLabel=QLabel("<u>"+sender+"</u>"+date.strftime("      %A %d-%m %H:%M")+" :",messageFrame)
         senderLabel.setTextFormat(Qt.RichText)
         senderLabel.setTextInteractionFlags(Qt.LinksAccessibleByKeyboard|Qt.TextSelectableByKeyboard|Qt.TextSelectableByMouse|Qt.LinksAccessibleByMouse)
         if sender in self.senders.keys():
@@ -88,33 +96,57 @@ class ChatWidget(QFrame):
         ChatLabel.setTextFormat(Qt.RichText)
         ChatLabel.setOpenExternalLinks(True)
         ChatLabel.setWordWrap(True)
-        # ChatLabel.setMinimumWidth(-1)
-        # ChatLabel.setMaximumWidth()
         ChatLabel.setTextInteractionFlags(Qt.TextBrowserInteraction|Qt.TextSelectableByKeyboard)
         message_layout.addStretch(1)
         message_layout.addWidget(senderLabel)
         message_layoutH.addSpacing(10)
         message_layoutH.addWidget(ChatLabel)
         message_layout.addLayout(message_layoutH)
-        # message_layoutH.addStretch(0)
-        # messageFrame.setMaximumWidth(500)
 
 
         #add object to message list
-        # self.layout.insertWidget(self.nb_message,messageFrame,1,Qt.AlignmentFlag.AlignRight)
         self.layout.insertWidget(self.nb_message,messageFrame)
+        self.messagesFrames.append(messageFrame)
         self.last_sender=sender
         self.nb_message+=1
         self.scroll_area.verticalScrollBar().setValue(self.scroll_area.verticalScrollBar().maximum())
 
-
+    #provoque des crash, bonne chance pour corriger
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        """cette fonction provoque pas mal de crash au démarrage, cause inconnue"""
         if watched==self.content and event==QEvent.Resize:
             self.scroll_area.setMinimumWidth(self.content.minimumSizeHint().width()+self.scroll_area.verticalScrollBar().width())
-        max_size=self.width()-80
-        for o in self.scroll_area.findChildren(QWidget,"Message Frame"):
-            o.setMaximumWidth(max_size)
-        return super().eventFilter(watched, event)
+        try:
+            max_size=self.width()-60
+            for o in self.messagesFrames:
+                    o.setMaximumWidth(max_size)
+        except:
+            pass
+        # return super().eventFilter(watched, event)
+        return False
 
-    def setThread(self,Thread):
-        self.pprzAppThread=Thread
+    def setIvyOutput(self,Ivy):
+        self.ivy=Ivy
+
+
+class chatReader():
+    def __init__(self,chat,file) -> None:
+        self.file=file
+        self.chat=chat
+        self.starttime=time()
+        self.already_sent=[]
+    def check_lines(self):
+        with open("python/plugins/"+self.file) as f:
+            i=0
+            a=f.readline()
+            while(a!=''):
+                i+=1
+                timedate=(a.split("|"))[0].split(":")
+                print(timedate)
+                if a not in self.already_sent and timedelta(hours=int(timedate[0]),minutes=int(timedate[1]),seconds=int(timedate[2]))<timedelta(seconds=time())-timedelta(seconds=self.starttime):
+                    print("hello")
+                    sending=a.split("|")
+                    self.chat.send_message(sending[1],sending[2])
+                    self.already_sent.append(a)
+                    break
+                a=f.readline()
