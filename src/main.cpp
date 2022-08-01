@@ -5,7 +5,6 @@
 #include <QNetworkProxy>
 #include <QProcessEnvironment>
 #include "pprz_dispatcher.h"
-#include "networkAdapter.h"
 #include <QWizard>
 #include "app_settings.h"
 #include "gcs_utils.h"
@@ -95,10 +94,6 @@ int main(int argc, char *argv[])
 #if defined(SPEECH_ENABLED)
         parser.addOption({"speech", "Enable speech"});
 #endif
-#if defined(ADAPTIVE_ENABLED)
-        parser.addOption({{"a","adaptive"},"Adaptive Interface Mode"});
-        parser.addOption({{"d","debugeyetrack"},"Show eye tracking movement on screen"});
-#endif
         parser.process(a);
 
         setVerbose(parser.isSet("v"));
@@ -106,12 +101,6 @@ int main(int argc, char *argv[])
 #if defined(SPEECH_ENABLED)
         setSpeech(parser.isSet("speech"));
         pprzApp()->toolbox()->speaker()->enableSpeech(parser.isSet("speech"));
-#endif
-#if defined(ADAPTIVE_ENABLED)
-        pprzApp()->toolbox()->setAdaptive(parser.isSet("a"));
-        if(parser.isSet("a")){
-                NetworkAdapter::get()->setDebug(parser.isSet("d"));
-            }
 #endif
 
         if(parser.isSet("fpedit") && PprzMain::launch_type == DEFAULT) {

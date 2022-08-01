@@ -7,7 +7,6 @@
 #include <QSettings>
 #include "app_settings.h"
 #include "gcs_utils.h"
-#include "circle_eyetrack.h"
 #include "python_plugins.h"
 
 #if defined(SPEECH_ENABLED)
@@ -35,18 +34,6 @@ void PprzMain::setupUi(int width, int height, QWidget* centralWidget) {
     QHBoxLayout* MainLayout = new QHBoxLayout(MainContainer);
     MainLayout->addWidget(centralWidget);
 
-    //add the alert overlay (red flashing overlay)
-    #if defined(ADAPTIVE_ENABLED)
-    alertWidget=createAlertWidget(MainContainer);
-    eyeTrack=new CircleEyeTrack(5,this);
-    eyeTrack->setAttribute(Qt::WA_TransparentForMouseEvents);
-    eyeTrack->raise();
-    eyeTrack->hide();
-    #endif
-    
-
-
-
     resize(width, height);
     menuBar = new QMenuBar(this);
     menuBar->setObjectName(QString::fromUtf8("menuBar"));
@@ -71,16 +58,6 @@ void PprzMain::setupUi(int width, int height, QWidget* centralWidget) {
     setServerStatus(false);
     statusBar->addPermanentWidget(serverStatusLed);
 
-    #if defined(ADAPTIVE_ENABLED)
-    auto l2=new QLabel("LSL status:");
-    l2->setObjectName("LSL status Label");
-    statusBar->addPermanentWidget(l2);
-    LSLStatusLed = new QLabel(statusBar);
-    LSLStatusLed->setObjectName("LSLStatusLed");
-    setLSLStatus(false);
-    statusBar->addPermanentWidget(LSLStatusLed);
-    #endif
-
     connect(DispatcherUi::get(), &DispatcherUi::new_ac_config, this, &PprzMain::newAC);
     connect(DispatcherUi::get(), &DispatcherUi::ac_deleted, this, &PprzMain::removeAC);
 
@@ -96,25 +73,12 @@ void PprzMain::setServerStatus(bool active) {
     }
     serverStatusLed->setPixmap(ic.pixmap(15, 15));
 }
-void PprzMain::setLSLStatus(bool active) {
-    QIcon ic;
-    if(active) {
-        ic = QIcon(":/pictures/green_led.svg");
-    } else {
-        ic = QIcon(":/pictures/red_led.svg");
-    }
-    LSLStatusLed->setPixmap(ic.pixmap(15, 15));
-}
 
 void PprzMain::populate_menu() {
 
     auto file_menu = menuBar->addMenu("&File");
     file_menu->setObjectName("FileMenu");
 
-    auto test = file_menu->addAction("Print Widget in cmd");
-    connect(test, &QAction::triggered, [=](){
-        readWidget(this,0);
-    });
     auto run_plugin = file_menu->addAction("run a plugin");
     connect(run_plugin,&QAction::triggered,[=](){
         auto settings = getAppSettings();
@@ -301,42 +265,3 @@ void PprzMain::removeAC(QString ac_id) {
     action->deleteLater();
     
 }
-#if defined(ADAPTIVE_ENABLED)
-//@brief add a red overlay on the widget which can be activated by the network tool
-QWidget* PprzMain::createAlertWidget(QWidget* parent){
-    QWidget* alert= new QWidget();
-    QPalette pal = QPalette();
-    
-    pal.setColor(QPalette::Window,QColor(255,0,0,100));
-    alert->setAutoFillBackground(true);
-    alert->setPalette(pal);
-    alert->setAttribute(Qt::WA_TransparentForMouseEvents);
-    alert->hide();
-    alert->setObjectName("AlertWidget");
-    alert->setParent(parent);
-    alert->raise();
-    
-
-    //set size to screen size as resizing would be difficult
-    QScreen *screen = QGuiApplication::primaryScreen();
-    QRect  screenGeometry = screen->geometry();
-    int h = screenGeometry.height();
-    int w = screenGeometry.width();
-    alert->setGeometry(0,0,w,h);
-    return alert;
-}
-void PprzMain::readWidget(QObject* main,int prof){
-    QObjectList list = main->children();
-    std::string layer="";
-    int a=prof;
-    while(a--){
-        layer+="  ";
-    }
-    cout<<layer+"Widget :"+main->objectName().toStdString()<<endl;
-    if(!list.isEmpty()){
-        foreach(auto obj,list){
-            if(main->objectName().toStdString()!=""){readWidget(obj,prof+1);}
-        }
-    }
-}
-#endif

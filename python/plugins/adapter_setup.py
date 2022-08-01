@@ -34,13 +34,6 @@ class sigBox(QObject): #object that contains signals
 
 
 def launch(ivyBus,mainWindow,pprzApp):
-
-
-
-
-
-
-
     #Exemple Flash:
 
     def flashAlert(color:QColor,time:float)->None:
@@ -155,12 +148,12 @@ def launch(ivyBus,mainWindow,pprzApp):
         """fonction qui récupère la dernière position du eyeTracker et prend la décision de faire
         flasher un/des widgets ou non"""
         p=QPoint(float(x),float(y))
-        #check if we are in a fixation, temporary algo!!!! REALLY NEED TO CHANGE!!!!
+        
         time_fixation=globals()["time_fixation"]
         last_point=globals()["last_point"]
         last_state=globals()["last_state"]
         looked_at_widget=globals()["looked_at_widget"]
-
+        #check if we are in a fixation, temporary algo!!!! REALLY NEED TO CHANGE!!!!
         # eye Fixation checking (more than X seconds with eye velocity < Y)
         if(sqrt(((p.x()-last_point.x())**2) + ((p.y()-last_point.y())**2))<=100.):
             if(time_fixation==-1):
@@ -170,9 +163,12 @@ def launch(ivyBus,mainWindow,pprzApp):
             radius=5
             time_fixation=-1
         last_point=p
+
+
+
         p2=mainWindow.mapFromGlobal(p)
         t=pprzApp.widgetAt(p)
-        if(t!=None and t!=mainWindow.centralWidget()):
+        if(t!=None and t!=mainWindow.centralWidget() and t.objectName() not in widgetBlacklistEyeTrack):
             if(time.time_ns()-time_fixation>((WIDGET_FLASH_TIME)*CLOCKS_PER_SEC) and time_fixation!=-1):
                 looked_at_widget.append(t)
             if EYETRACK_DEBUG:flashEyeTrack(p2,radius)
@@ -263,3 +259,15 @@ def launch(ivyBus,mainWindow,pprzApp):
     
     instructionAdaption=Adaptation("instruction",instruction_setup)
 
+
+
+    # Exemple ChatReader
+    def readlines():
+        chatread.check_lines()
+    def chatReader_setup(self):
+        global chatread
+        chatread=chatReader(chat.object,chatfile) # chatfile est un objet global dans les custom config de configAdapter
+        self.add_repeat_callback(1,readlines)
+        self.run(ivyBus) #don't forget this function, it will bind correctly all the callbacks on the correct ivyBus
+    AddTextToChatFromFile=Adaptation("chatreader",chatReader_setup)
+        

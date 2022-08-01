@@ -114,17 +114,19 @@ class ChatWidget(QFrame):
     #provoque des crash, bonne chance pour corriger
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         """cette fonction provoque pas mal de crash au démarrage, cause inconnue"""
-        if watched==self.content and event==QEvent.Resize:
-            self.scroll_area.setMinimumWidth(self.content.minimumSizeHint().width()+self.scroll_area.verticalScrollBar().width())
-        try:
-            max_size=self.width()-60
-            for o in self.messagesFrames:
-                    o.setMaximumWidth(max_size)
+        try:    
+            if watched==self.content:
+                self.scroll_area.setMinimumWidth(self.content.minimumSizeHint().width()+self.scroll_area.verticalScrollBar().width())
+            try:
+                max_size=self.width()-60
+                for o in self.messagesFrames:
+                        o.setMaximumWidth(max_size)
+            except:
+                pass
+            # return super().eventFilter(watched, event)
+            return False
         except:
-            pass
-        # return super().eventFilter(watched, event)
-        return False
-
+            return False
     def setIvyOutput(self,Ivy):
         self.ivy=Ivy
 
@@ -142,9 +144,7 @@ class chatReader():
             while(a!=''):
                 i+=1
                 timedate=(a.split("|"))[0].split(":")
-                print(timedate)
                 if a not in self.already_sent and timedelta(hours=int(timedate[0]),minutes=int(timedate[1]),seconds=int(timedate[2]))<timedelta(seconds=time())-timedelta(seconds=self.starttime):
-                    print("hello")
                     sending=a.split("|")
                     self.chat.send_message(sending[1],sending[2])
                     self.already_sent.append(a)

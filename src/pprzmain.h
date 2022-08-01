@@ -3,9 +3,6 @@
 
 #include <QMainWindow>
 #include <QtWidgets>
-#if defined(ADAPTIVE_ENABLED)
-#include "circle_eyetrack.h"
-#endif
 
 enum LaunchTypes {
     DEFAULT,
@@ -24,13 +21,8 @@ public:
     static LaunchTypes launch_type;
     static int const EXIT_CODE_REBOOT;// = -123456;
     void setupUi(int width, int height, QWidget* centralWidget);
-    #if defined(ADAPTIVE_ENABLED)
-    QWidget* getAlertWidget(){return alertWidget;}
-    CircleEyeTrack* getEyeTrack(){return eyeTrack;}
-    #endif
 
     void setServerStatus(bool active);
-    void setLSLStatus(bool active);
 
     QToolBar* toolBar() {return mainToolBar;}
 
@@ -57,12 +49,6 @@ private:
     QMap<QString, QMenu*> acMenus;
     QMap<QString, QAction*> acActions;
     QLabel* serverStatusLed;
-    QLabel* LSLStatusLed;
-
-    #if defined(ADAPTIVE_ENABLED)
-    QWidget* alertWidget;
-    CircleEyeTrack* eyeTrack;
-    #endif
 signals:
     void killPlugins();
 };

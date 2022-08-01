@@ -20,6 +20,8 @@ class callback():
         class sigHolder(QObject):
             sig=Signal([str]*len(inspect.getfullargspec(function).args))
         self.sound=False
+        self.postIvy=False
+        self.ivyBus=None
         self.sigh=sigHolder()
         self.bind_message=bind_message
         self.func=function
@@ -33,11 +35,8 @@ class callback():
         if self.sound:
             print("Playing sound for callback")
             self.play_sound()
-
-
-    def cb_config(self,sound_toggle,soundfile=None):
-        self.sound=sound_toggle
-        self.soundfile=soundfile
+        if self.postIvy:
+            self.ivyBus.send_msg(self.postIvy)
     def play_sound(self):
         mixer.music.load(self.soundfile)
         mixer.music.play(1,0.0)

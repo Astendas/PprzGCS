@@ -1,2 +1,3 @@
-00:00:05|Roger le bricoleur|eh salut jeune fanfrelin, je suis à la recherche de mes outils, pourrez-tu les retrouver?
-00:00:20|misse le chat|miaou (monologue enivrant sur la condition mortelle)
+00:00:05|Roger le bricoleur|eh salut jeune fanfrelin, je suis à la recherche de mes outils, pourriez-vous les retrouver?
+00:00:20|maus le chat|miaou (monologue enivrant sur la condition mortelle)
+00:00:30|test3|test3

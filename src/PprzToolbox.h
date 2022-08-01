@@ -39,9 +39,6 @@ public:
 #if defined(SPEECH_ENABLED)
     Speaker*              speaker              () {return _speaker             ;}
 #endif
-#if defined(ADAPTIVE_ENABLED)
-    NetworkAdapter*       networkAdapter       () {return _networkAdapter      ;}
-#endif
     void setAdaptive(bool b){adaptive=b;}
 
 private:
@@ -56,9 +53,6 @@ private:
     PythonPlugins*        _plugins              = nullptr;
 #if defined(SPEECH_ENABLED)
     Speaker* _speaker                           = nullptr;
-#endif
-#if defined(ADAPTIVE_ENABLED)
-    NetworkAdapter*       _networkAdapter       = nullptr;
 #endif
 
     friend class PprzApplication;
