@@ -44,13 +44,9 @@ option(LIBRARY "Enable Python Library generation for binded c++ object" OFF)
 
 find_package(IvyQt REQUIRED)
 find_package(pprzlinkQt REQUIRED)
-find_package(LSL REQUIRED)
-find_library(LSL lsl)
-set(LSL_LIBRARIES lsl)
 
 
-#set(Qt5_DIR "$ENV{HOME}/Qt/5.15.2/gcc_64/lib/cmake/Qt5")
-set(Qt5_DIR "/home/victor/Qt/5.15.2/gcc_64/lib/cmake/Qt5")
+set(Qt5_DIR "$ENV{HOME}/Qt/5.15.2/gcc_64/lib/cmake/Qt5")
 
 if(SPEECH)
     message("SPEECH ENABLED !")
